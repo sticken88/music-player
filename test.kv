@@ -1,0 +1,16 @@
+<GridLayout>:
+      rows: 2
+      cols: 2
+
+      Button:
+            text: 'Play/Pause'
+            on_press: root.play_pause_song()
+      Button:
+            text: 'Stop'
+            on_press: root.stop_song()
+      Slider:
+            min: 0
+            max: 1
+            step: 0.01
+            value: 0.5
+            on_value: root.set_volume(self.value)
