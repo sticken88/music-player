@@ -1,4 +1,4 @@
-<GridLayout>:
+<MusicPlayer>:
       rows: 2
       cols: 2
 
@@ -8,6 +8,9 @@
       Button:
             text: 'Stop'
             on_press: root.stop_song()
+      Button:
+            text: 'Reload'
+            on_press: root.reload_song()
       Slider:
             min: 0
             max: 1
