@@ -39,6 +39,14 @@ class MusicPlayer(GridLayout):
        self.elapsed = 0
        self.song.stop()
 
+    ''' Reloading the song if it's currently playing.
+        Just call self.stop_song and then self.play_pause_song        
+    '''
+    def reload_song(self):
+       if self.song.state == 'play':
+          self.stop_song()
+          self.play_pause_song()
+
     ''' Setting the volume.
         When the value of the slider is changed, this will affect the 
         volume of the played song.
