@@ -31,18 +31,15 @@ class MusicPlayer(FloatLayout):
         self._popup.dismiss()
 
     def load(self, path, filename):
-        print str(path) + " - " + str(filename)
-        #with open(os.path.join(path, filename[0])) as stream:
-             #self.text_input.text = stream.read()
-
+        self.song = SoundLoader.load(filename[0])
+        self.elapsed = 0
+        # It seems to be a reasonable value for now
+        self.song.volume = 0.3
+        print "Loaded {}".format(filename[0])
         self.dismiss_popup()
 
     def __init__(self, **kwargs):
        super(MusicPlayer, self).__init__(**kwargs)
-       self.song = SoundLoader.load("/home/matteo/Music/Sigala_-_Sweet_Lovin_(Official_Audio)_mp3.mp3")
-       self.elapsed = 0
-       # It seems to be a reasonable value for now
-       self.song.volume = 0.3
       
     '''Playing or pausing a song.
         1) If stopped play it again from the 'elapsed' value.
