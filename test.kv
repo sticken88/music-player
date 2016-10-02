@@ -1,19 +1,53 @@
 <MusicPlayer>:
-      rows: 2
-      cols: 2
+    BoxLayout:
+        orientation: 'vertical'
 
-      Button:
-            text: 'Play/Pause'
-            on_press: root.play_pause_song()
-      Button:
-            text: 'Stop'
-            on_press: root.stop_song()
-      Button:
-            text: 'Reload'
-            on_press: root.reload_song()
-      Slider:
-            min: 0
-            max: 1
-            step: 0.01
-            value: 0.5
-            on_value: root.set_volume(self.value)
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+
+            Button:
+                text: 'Load song'
+                on_release: root.show_load()
+            Button:
+                text: 'Play/Pause'
+                #size: 100, 75
+                #pos: 10, 0
+                on_press: root.play_pause_song()
+            Button:
+                text: 'Stop'
+                #size: 100, 75
+                #pos: 110, 0
+                on_press: root.stop_song()
+            Button:
+                text: 'Reload'
+                #size: 100, 75
+                #pos: 210, 0
+                on_press: root.reload_song()
+            Slider:
+                min: 0
+                max: 1
+                #size: 350, 10
+                #pos: 400, 30
+                step: 0.01
+                value: 0.5
+                on_value: root.set_volume(self.value)
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
