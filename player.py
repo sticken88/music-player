@@ -1,11 +1,41 @@
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.uix.gridlayout import GridLayout
+from kivy.uix.floatlayout import FloatLayout
+from kivy.factory import Factory
+from kivy.properties import ObjectProperty
+from kivy.uix.popup import Popup
+
+import os
 
 # module to handle audio files
 from kivy.core.audio import SoundLoader
 
-class MusicPlayer(GridLayout):
+# class used to show a file system manager to choose a song to play
+class LoadDialog(FloatLayout):
+    load = ObjectProperty(None)
+    cancel = ObjectProperty(None)
+
+class MusicPlayer(FloatLayout):
+
+    loadfile = ObjectProperty(None)
+   
+    ''' Shows the popup to choose the file to play
+    '''
+    def show_load(self):
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Load file", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def load(self, path, filename):
+        print str(path) + " - " + str(filename)
+        #with open(os.path.join(path, filename[0])) as stream:
+             #self.text_input.text = stream.read()
+
+        self.dismiss_popup()
 
     def __init__(self, **kwargs):
        super(MusicPlayer, self).__init__(**kwargs)
@@ -58,6 +88,9 @@ class MusicPlayer(GridLayout):
 class TestApp(App):
     def build(self):
         return MusicPlayer()
+
+Factory.register('TestApp', cls=TestApp)
+Factory.register('LoadDialog', cls=LoadDialog)
 
 if __name__ == "__main__":
     TestApp().run()
