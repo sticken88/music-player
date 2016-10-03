@@ -8,14 +8,14 @@ from kivy.uix.popup import Popup
 import os
 
 # module to handle audio files
-from kivy.core.audio import SoundLoader
+from music_player import MusicPlayer
 
 # class used to show a file system manager to choose a song to play
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
-class MusicPlayer(FloatLayout):
+class MainGui(FloatLayout):
 
     loadfile = ObjectProperty(None)
    
@@ -31,15 +31,12 @@ class MusicPlayer(FloatLayout):
         self._popup.dismiss()
 
     def load(self, path, filename):
-        self.song = SoundLoader.load(filename[0])
-        self.elapsed = 0
-        # It seems to be a reasonable value for now
-        self.song.volume = 0.3
-        print "Loaded {}".format(filename[0])
+        self.player.load_song(filename[0])
         self.dismiss_popup()
 
     def __init__(self, **kwargs):
-       super(MusicPlayer, self).__init__(**kwargs)
+       super(MainGui, self).__init__(**kwargs)
+       self.player = MusicPlayer()
       
     '''Playing or pausing a song.
         1) If stopped play it again from the 'elapsed' value.
@@ -47,15 +44,7 @@ class MusicPlayer(FloatLayout):
         2) If it's playing store the elapsed time and stop the song.
     '''
     def play_pause_song(self):
-
-       if self.song.state == 'stop':
-          print "Play or resume"
-          self.song.play()
-          self.song.seek(self.elapsed)
-       elif self.song.state == 'play':
-          print "Stopping.."
-          self.elapsed = self.song.get_pos()
-          self.song.stop()
+       self.player.play_pause_song()
 
     ''' Stopping the song.
         1) self.elapsed set to 0 so the next song (or the same)
@@ -63,28 +52,25 @@ class MusicPlayer(FloatLayout):
         2) actually stop the song
     '''    
     def stop_song(self):
-       self.elapsed = 0
-       self.song.stop()
-
+       self.player.stop_song()
+ 
     ''' Reloading the song if it's currently playing.
         Just call self.stop_song and then self.play_pause_song        
     '''
     def reload_song(self):
-       if self.song.state == 'play':
-          self.stop_song()
-          self.play_pause_song()
+       self.player.reload_song()
 
     ''' Setting the volume.
         When the value of the slider is changed, this will affect the 
         volume of the played song.
     '''
     def set_volume(self, value):
-       self.song.volume = value
-       
+       self.set_volume(value)
+
 
 class TestApp(App):
     def build(self):
-        return MusicPlayer()
+        return MainGui()
 
 Factory.register('TestApp', cls=TestApp)
 Factory.register('LoadDialog', cls=LoadDialog)
