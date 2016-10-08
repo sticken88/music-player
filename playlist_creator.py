@@ -10,7 +10,7 @@ class PlaylistManager():
          playlist.write("Title={}\n".format(name))
          for file in os.listdir(base_path):
             if file.endswith(".mp3"):
-               playlist.write("File{}=file://{}\n".format(songs, os.path.join(base_path, file).replace(" ", "%20").replace("(", "%28").replace(")", "%29")))
+               playlist.write("File{}=file://{}\n".format(songs, os.path.join(base_path, file).replace(" ", "%20")))
                playlist.write("Title{}={}\n".format(songs, os.path.basename(file)))
                songs+=1
 
