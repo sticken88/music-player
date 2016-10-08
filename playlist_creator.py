@@ -25,9 +25,14 @@ class PlaylistManager():
       for i in range(len(lines)):
          line = lines[i]
          if "File" in line:
+            # get the file path
+            starting_path = line.split("=")
+            file_path = starting_path[1][7:]
+            # get the title
             i+=1
-            title = lines[i]
-            print title
+            starting_title = lines[i].split("=")
+            title = starting_title[1]
+            print file_path
 
 
    def create_m3u8(self, base_path, name):
