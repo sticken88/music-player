@@ -2,6 +2,21 @@ import os
 
 class PlaylistManager():
 
+   ''' Generic method which determines the correct playlist format
+       and parses it accordingly
+   '''
+   def read_playlist(self, playlist):
+      basename = os.path.basename(playlist)
+
+      if basename.endswith(".pls"):
+         return self.read_pls(playlist)
+      elif basename.endswith(".m3u8"):
+         print "Playlist format not supported yet."
+         return None, None
+      else:
+         print "Unknown playlist format."
+         return None, None
+
    '''
    Create a .pls playlist file with name "name" given a path
    '''
@@ -58,4 +73,4 @@ class PlaylistManager():
 #create_m3u8()
 manager = PlaylistManager()
 manager.create_pls("/home/matteo/Music", "nuova_pls")
-titles, paths = manager.read_pls("RecentlyAdded.pls")
+titles, paths = manager.read_playlist("RecentlyAdded.pls")
