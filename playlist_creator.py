@@ -1,6 +1,10 @@
 import os
 
 class PlaylistManager():
+
+   '''
+   Create a .pls playlist file with name "name" given a path
+   '''
    def create_pls(self, base_path, name):
       #base_path = "/home/matteo/Music"
       with open("{}.pls".format(name), "w") as playlist:
@@ -18,7 +22,12 @@ class PlaylistManager():
          # write the version of the playlist, 2 is currently valid one
          playlist.write("Version=2")
 
+   '''
+   Read a .pls playlist file to get data used to play songs
+   '''
    def read_pls(self, fullname):
+      songs_titles = []
+      songs_paths = []
       with open(fullname, "r") as playlist:
          lines = playlist.readlines()
 
@@ -27,12 +36,15 @@ class PlaylistManager():
          if "File" in line:
             # get the file path
             starting_path = line.split("=")
-            file_path = starting_path[1][7:]
+            song_path = starting_path[1][7:].replace("%20", " ")
+            songs_paths.append(song_path)
             # get the title
             i+=1
             starting_title = lines[i].split("=")
-            title = starting_title[1]
-            print file_path
+            songs_titles.append(starting_title[1])
+            #print file_path
+
+      return songs_titles, songs_paths
 
 
    def create_m3u8(self, base_path, name):
@@ -46,4 +58,4 @@ class PlaylistManager():
 #create_m3u8()
 manager = PlaylistManager()
 manager.create_pls("/home/matteo/Music", "nuova_pls")
-manager.read_pls("RecentlyAdded.pls")
+titles, paths = manager.read_pls("RecentlyAdded.pls")
