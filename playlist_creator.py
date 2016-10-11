@@ -29,7 +29,7 @@ class PlaylistManager():
          playlist.write("Title={}\n".format(name))
          for file in os.listdir(base_path):
             if file.endswith(".mp3"):
-               playlist.write("File{}=file://{}\n".format(songs, os.path.join(base_path, file).replace(" ", "%20")))
+               playlist.write("File{}=file://{}\n".format(songs, os.path.join(base_path, file))) # .replace(" ", "%20")
                playlist.write("Title{}={}\n".format(songs, os.path.basename(file)))
                songs+=1
 
@@ -51,7 +51,7 @@ class PlaylistManager():
          if "File" in line:
             # get the file path
             starting_path = line.split("=")
-            song_path = starting_path[1][7:].replace("%20", " ")
+            song_path = starting_path[1][7:]#.replace("%20", " ")
             songs_paths.append(song_path)
             # get the title
             i+=1
@@ -70,7 +70,12 @@ class PlaylistManager():
                playlist.write("#EXTINF:-1,{}\n".format(os.path.basename(file)))
                playlist.write("file://{}\n".format(os.path.join(base_path, file).replace(" ", "%20").replace("(", "%28").replace(")", "%29")))
 
+# .replace("", "'")
+
 #create_m3u8()
 manager = PlaylistManager()
 manager.create_pls("/home/matteo/Music", "nuova_pls")
-titles, paths = manager.read_playlist("RecentlyAdded.pls")
+titles, paths = manager.read_playlist("nuova_pls.pls")
+
+#for i in range(len(titles)):
+   #print titles[i] + " || " + paths[i]
