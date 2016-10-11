@@ -68,13 +68,15 @@ class PlaylistManager():
          for file in os.listdir(base_path):
             if file.endswith(".mp3"):
                playlist.write("#EXTINF:-1,{}\n".format(os.path.basename(file)))
-               playlist.write("file://{}\n".format(os.path.join(base_path, file).replace(" ", "%20").replace("(", "%28").replace(")", "%29")))
+               playlist.write("file://{}\n".format(os.path.join(base_path, file)))
+               #playlist.write("file://{}\n".format(os.path.join(base_path, file).replace(" ", "%20").replace("(", "%28").replace(")", "%29")))
 
 # .replace("", "'")
 
-#create_m3u8()
+
 manager = PlaylistManager()
 manager.create_pls("/home/matteo/Music", "nuova_pls")
+manager.create_m3u8("/home/matteo/Music", "nuova_pls")
 titles, paths = manager.read_playlist("nuova_pls.pls")
 
 #for i in range(len(titles)):
