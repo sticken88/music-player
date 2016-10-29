@@ -18,6 +18,7 @@ class LoadDialog(FloatLayout):
 class MainGui(FloatLayout):
 
     loadfile = ObjectProperty(None)
+    playing = False
    
     ''' Shows the popup to choose the file to play
     '''
@@ -31,7 +32,7 @@ class MainGui(FloatLayout):
         self._popup.dismiss()
 
     def load(self, path, filename):
-        self.player.load_song(filename[0])
+        self.player.load_audio(filename[0])
         self.dismiss_popup()
 
     def __init__(self, **kwargs):
@@ -43,16 +44,32 @@ class MainGui(FloatLayout):
            If it's 0 play it from the beginning.
         2) If it's playing store the elapsed time and stop the song.
     '''
-    def play_pause_song(self):
-       self.player.play_pause_song()
+    def play_pause_audio(self):
+       if self.playing:
+           self.pause_audio()
+       else:
+           self.play_audio()
+
+
+    def pause_audio(self):
+       self.playing = False
+       self.player.pause_audio()       
+
+
+    def play_audio(self):
+       self.playing = True
+       self.player.play_audio()
+       # TODO: to be fully tested
+       self.player.look_bus()
 
     ''' Stopping the song.
         1) self.elapsed set to 0 so the next song (or the same)
            will be played from the beginning
         2) actually stop the song
     '''    
-    def stop_song(self):
-       self.player.stop_song()
+    def stop_audio(self):
+       self.playing = False
+       self.player.stop_audio()
  
     ''' Reloading the song if it's currently playing.
         Just call self.stop_song and then self.play_pause_song        
