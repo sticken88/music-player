@@ -1,57 +1,80 @@
-import os
-from kivy.core.audio import SoundLoader # to handle audio files
+import gst
+import time
 
 class MusicPlayer():
 
-    def __init__(self):
-        self.volume = 0.5
-        self.elapsed = 0
-        self.song = None
+   def __init__(self):
+      # Create a Gstreamer pipeline
+      self.pipeline = gst.Pipeline('pipeline')
 
-    def load_song(self, title):
-        self.song = SoundLoader.load(title)
-        # It seems to be a reasonable value for now
-        self.song.volume = self.volume
-        print "Loaded {}".format(title)
+      # Create the elements that will be added to the pipeline
+      self.audio_source = gst.element_factory_make('filesrc', 'audio_source')
+      self.decode = gst.element_factory_make('mad', 'decode')
+      self.convert = gst.element_factory_make('audioconvert', 'convert')
+      self.equalizer = gst.element_factory_make('equalizer-3bands', 'equalizer')
+      self.audio_sink = gst.element_factory_make('autoaudiosink', 'audio_sink')
+
+      # Ensure all elements were created successfully.
+      if (not self.pipeline or not self.audio_source or not self.decode or 
+          not self.convert or not self.equalizer or not self.audio_sink):
+            print 'Not all elements could be created. Cannot create a Gstreamer pipeline'
+            exit(-1)
+
+      # Setting equalizer prpoperties
+      self.equalizer.set_property('band1', -24.0)
+      self.equalizer.set_property('band2', -24.0)
+
+      self.pipeline.add(self.audio_source, self.decode, self.convert, self.equalizer, self.audio_sink)
+
+      # Add our elements to the pipeline
+      if (not gst.element_link_many(self.audio_source, self.decode, self.convert, 
+          self.equalizer, self.audio_sink)):
+            print "Elements could not be linked."
+            exit(-1)
 
 
-    '''Playing or pausing a song.
-        1) If stopped play it again from the 'elapsed' value.
-           If it's 0 play it from the beginning.
-        2) If it's playing store the elapsed time and stop the song.
-    '''
-    def play_pause_song(self):
+   def load_audio(self, audioResource):
+      self.audio_source.set_property('location', audioResource)
+      self.play_audio()
 
-       if self.song.state == 'stop':
-          print "Play or resume"
-          self.song.play()
-          self.song.seek(self.elapsed)
-       elif self.song.state == 'play':
-          print "Stopping.."
-          self.elapsed = self.song.get_pos()
-          self.song.stop()
 
-    ''' Stopping the song.
-        1) self.elapsed set to 0 so the next song (or the same)
-           will be played from the beginning
-        2) actually stop the song
-    '''    
-    def stop_song(self):
-       self.elapsed = 0
-       self.song.stop()
+   def play_audio(self):
+      # Play the song
+      self.pipeline.set_state(gst.STATE_PLAYING)
+      print "Play the stream.."
 
-    ''' Reloading the song if it's currently playing.
-        Just call self.stop_song and then self.play_pause_song        
-    '''
-    def reload_song(self):
-       if self.song.state == 'play':
-          self.stop_song()
-          self.play_pause_song()
 
-    ''' Setting the volume.
-        When the value of the slider is changed, this will affect the 
-        volume of the played song.
-    '''
-    def set_volume(self, volume):
-       self.volume = volume
-       self.song.volume = self.volume
+      '''self.bus = self.pipeline.get_bus()
+
+      self.msg = self.bus.timed_pop_filtered(gst.CLOCK_TIME_NONE,
+                  gst.MESSAGE_ERROR | gst.MESSAGE_EOS)'''
+
+   
+   def pause_audio(self):
+      self.pipeline.set_state(gst.STATE_PAUSED)
+      print "Pausing the stream.."
+
+
+   def stop_audio(self):
+      self.pipeline.set_state(gst.STATE_NULL)
+      print "Stopping the audio.."
+
+   def look_bus(self):
+      bus = self.pipeline.get_bus()
+
+      msg = bus.timed_pop_filtered(gst.CLOCK_TIME_NONE,
+            gst.MESSAGE_ERROR | gst.MESSAGE_EOS)
+      print msg
+
+song = Song()
+song.load_song('/home/matteo/Music/Linkin Park - In The End.mp3')
+
+#song.play_song()
+
+time.sleep(10)
+
+song.pause_song()
+time.sleep(5)
+
+song.play_song()
+song.look_bus()
