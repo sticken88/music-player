@@ -66,7 +66,7 @@ class MusicPlayer():
             gst.MESSAGE_ERROR | gst.MESSAGE_EOS)
       print msg
 
-song = Song()
+'''song = Song()
 song.load_song('/home/matteo/Music/Linkin Park - In The End.mp3')
 
 #song.play_song()
@@ -77,4 +77,4 @@ song.pause_song()
 time.sleep(5)
 
 song.play_song()
-song.look_bus()
+song.look_bus()'''
