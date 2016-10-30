@@ -32,6 +32,16 @@ class MusicPlayer():
             print "Elements could not be linked."
             exit(-1)
 
+      # manage the bus (not sure if it's the right place)
+      bus = self.pipeline.get_bus()
+      bus.add_signal_watch()
+      bus.connect("message", self.on_message)
+
+      '''msg = bus.timed_pop_filtered(gst.CLOCK_TIME_NONE,
+            gst.MESSAGE_ERROR | gst.MESSAGE_EOS)
+      print msg'''
+      #gst_bus_add_watch (bus, my_bus_callback, NULL);
+
 
    def load_audio(self, audioResource):
       self.audio_source.set_property('location', audioResource)
@@ -56,15 +66,16 @@ class MusicPlayer():
 
 
    def stop_audio(self):
-      self.pipeline.set_state(gst.STATE_NULL)
+      self.pipeline.set_state(gst.STATE_READY)
       print "Stopping the audio.."
 
-   def look_bus(self):
-      bus = self.pipeline.get_bus()
+   def on_message(self, bus, message):
+      print message
+      '''bus = self.pipeline.get_bus()
 
       msg = bus.timed_pop_filtered(gst.CLOCK_TIME_NONE,
             gst.MESSAGE_ERROR | gst.MESSAGE_EOS)
-      print msg
+      print msg'''
 
 '''song = Song()
 song.load_song('/home/matteo/Music/Linkin Park - In The End.mp3')
