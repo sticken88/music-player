@@ -60,7 +60,7 @@ class MainGui(FloatLayout):
        self.playing = True
        self.player.play_audio()
        # TODO: to be fully tested
-       self.player.look_bus()
+       #self.player.look_bus()
 
     ''' Stopping the song.
         1) self.elapsed set to 0 so the next song (or the same)
