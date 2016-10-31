@@ -18,7 +18,6 @@ class LoadDialog(FloatLayout):
 class MainGui(FloatLayout):
 
     loadfile = ObjectProperty(None)
-    playing = False
    
     ''' Shows the popup to choose the file to play
     '''
@@ -45,19 +44,14 @@ class MainGui(FloatLayout):
         2) If it's playing store the elapsed time and stop the song.
     '''
     def play_pause_audio(self):
-       if self.playing:
-           self.pause_audio()
-       else:
-           self.play_audio()
+      self.player.play_pause_audio()
 
 
     def pause_audio(self):
-       self.playing = False
        self.player.pause_audio()       
 
 
     def play_audio(self):
-       self.playing = True
        self.player.play_audio()
        # TODO: to be fully tested
        #self.player.look_bus()
@@ -68,7 +62,6 @@ class MainGui(FloatLayout):
         2) actually stop the song
     '''    
     def stop_audio(self):
-       self.playing = False
        self.player.stop_audio()
  
     ''' Reloading the song if it's currently playing.
