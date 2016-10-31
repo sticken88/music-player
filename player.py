@@ -11,28 +11,28 @@ import os
 from music_player import MusicPlayer
 
 # class used to show a file system manager to choose a song to play
-class LoadDialog(FloatLayout):
+'''class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
-    cancel = ObjectProperty(None)
+    cancel = ObjectProperty(None)'''
 
 class MainGui(FloatLayout):
 
-    loadfile = ObjectProperty(None)
+    #loadfile = ObjectProperty(None)
    
     ''' Shows the popup to choose the file to play
     '''
-    def show_load(self):
+    '''def show_load(self):
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
         self._popup = Popup(title="Load file", content=content,
                             size_hint=(0.9, 0.9))
         self._popup.open()
 
     def dismiss_popup(self):
-        self._popup.dismiss()
+        self._popup.dismiss()'''
 
     def load(self, path, filename):
         self.player.load_audio(filename[0])
-        self.dismiss_popup()
+        #self.dismiss_popup()
 
     def __init__(self, **kwargs):
        super(MainGui, self).__init__(**kwargs)
@@ -83,7 +83,7 @@ class TestApp(App):
         return MainGui()
 
 Factory.register('TestApp', cls=TestApp)
-Factory.register('LoadDialog', cls=LoadDialog)
+#Factory.register('LoadDialog', cls=LoadDialog)
 
 if __name__ == "__main__":
     TestApp().run()

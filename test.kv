@@ -3,12 +3,20 @@
         orientation: 'vertical'
 
         BoxLayout:
+            FileChooserListView:
+                id: listfilechooser
+                on_submit: root.load(listfilechooser.path, listfilechooser.selection)
+
+            Button:
+                text: 'Label 2'
+
+        BoxLayout:
             size_hint_y: None
             height: 30
 
-            Button:
-                text: 'Load song'
-                on_release: root.show_load()
+            #Button:
+                #text: 'Load song'
+                #on_release: root.show_load()
             Button:
                 text: 'Play/Pause'
                 #size: 100, 75
@@ -33,21 +41,23 @@
                 value: 0.5
                 on_value: root.set_volume(self.value)
 
-<LoadDialog>:
-    BoxLayout:
-        size: root.size
-        pos: root.pos
-        orientation: "vertical"
-        FileChooserIconView:
-            id: filechooser
 
-        BoxLayout:
-            size_hint_y: None
-            height: 30
-            Button:
-                text: "Cancel"
-                on_release: root.cancel()
-
-            Button:
-                text: "Load"
-                on_release: root.load(filechooser.path, filechooser.selection)
+#<LoadDialog>:
+#    BoxLayout:
+#        size: root.size
+#        pos: root.pos
+#        orientation: "vertical"
+#        FileChooserIconView:
+#            id: filechooser
+#
+#        BoxLayout:
+#            size_hint_y: None
+#            height: 30
+#            Button:
+#                text: "Cancel"
+#                on_release: root.cancel()
+#
+#            Button:
+#                text: "Load"
+#                on_release: root.load(filechooser.path, filechooser.selection)
+#
