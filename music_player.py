@@ -4,6 +4,9 @@ import time
 class MusicPlayer():
 
    def __init__(self):
+
+      # flag used to switch between play and pause
+      self.playing = False
       # Create a Gstreamer pipeline
       self.pipeline = gst.Pipeline('pipeline')
 
@@ -51,6 +54,7 @@ class MusicPlayer():
    def play_audio(self):
       # Play the song
       self.pipeline.set_state(gst.STATE_PLAYING)
+      self.playing = True
       print "Play the stream.."
 
 
@@ -62,12 +66,22 @@ class MusicPlayer():
    
    def pause_audio(self):
       self.pipeline.set_state(gst.STATE_PAUSED)
+      self.playing = False
       print "Pausing the stream.."
 
 
    def stop_audio(self):
       self.pipeline.set_state(gst.STATE_READY)
-      print "Stopping the audio.."
+      self.playing = False
+      print "Stopping the stream.."
+
+
+   def play_pause_audio(self):
+       if self.playing:
+           self.pause_audio()
+       else:
+           self.play_audio()
+
 
    def on_message(self, bus, message):
       print message
