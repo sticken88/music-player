@@ -31,6 +31,7 @@ class MainGui(FloatLayout):
         self._popup.dismiss()'''
 
     def load(self, path, filename):
+        self.player.stop_audio()
         self.player.load_audio(filename[0])
         #self.dismiss_popup()
 
@@ -75,7 +76,7 @@ class MainGui(FloatLayout):
         volume of the played song.
     '''
     def set_volume(self, value):
-       self.set_volume(value)
+       self.player.set_volume(value)
 
 
 class TestApp(App):
