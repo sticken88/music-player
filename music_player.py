@@ -16,10 +16,13 @@ class MusicPlayer():
       self.convert = gst.element_factory_make('audioconvert', 'convert')
       self.equalizer = gst.element_factory_make('equalizer-3bands', 'equalizer')
       self.audio_sink = gst.element_factory_make('autoaudiosink', 'audio_sink')
+      self.volume = gst.element_factory_make('volume')
+      self.volume.set_property('volume', 0.5)
 
       # Ensure all elements were created successfully.
       if (not self.pipeline or not self.audio_source or not self.decode or 
-          not self.convert or not self.equalizer or not self.audio_sink):
+          not self.convert or not self.equalizer or not self.audio_sink or
+          not self.volume):
             print 'Not all elements could be created. Cannot create a Gstreamer pipeline'
             exit(-1)
 
@@ -27,10 +30,10 @@ class MusicPlayer():
       self.equalizer.set_property('band1', -24.0)
       self.equalizer.set_property('band2', -24.0)
 
-      self.pipeline.add(self.audio_source, self.decode, self.convert, self.equalizer, self.audio_sink)
+      self.pipeline.add(self.audio_source, self.decode, self.convert, self.equalizer, self.audio_sink, self.volume)
 
       # Add our elements to the pipeline
-      if (not gst.element_link_many(self.audio_source, self.decode, self.convert, 
+      if (not gst.element_link_many(self.audio_source, self.decode, self.convert, self.volume,
           self.equalizer, self.audio_sink)):
             print "Elements could not be linked."
             exit(-1)
@@ -82,24 +85,16 @@ class MusicPlayer():
        else:
            self.play_audio()
 
+   def set_volume(self, volume):
+       self.volume.set_property('volume', volume)
+
 
    def on_message(self, bus, message):
-      print message
-      '''bus = self.pipeline.get_bus()
 
-      msg = bus.timed_pop_filtered(gst.CLOCK_TIME_NONE,
-            gst.MESSAGE_ERROR | gst.MESSAGE_EOS)
-      print msg'''
-
-'''song = Song()
-song.load_song('/home/matteo/Music/Linkin Park - In The End.mp3')
-
-#song.play_song()
-
-time.sleep(10)
-
-song.pause_song()
-time.sleep(5)
-
-song.play_song()
-song.look_bus()'''
+      if message.type == gst.MessageType.EOS:
+         #self.pipeline.set_state(gst.STATE_READY)
+         print message
+      elif message.type == gst.MessageType.ERROR:
+         error_msg = message.parse_error()
+         #self.pipeline.set_state(gst.STATE_NULL)
+         print error_msg
