@@ -50,6 +50,7 @@ class MusicPlayer():
 
 
    def load_audio(self, audioResource):
+      self.stop_audio()
       self.audio_source.set_property('location', audioResource)
       self.play_audio()
 

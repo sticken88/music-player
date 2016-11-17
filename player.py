@@ -31,7 +31,7 @@ class MainGui(FloatLayout):
         self._popup.dismiss()'''
 
     def load(self, path, filename):
-        self.player.stop_audio()
+        #self.player.stop_audio()
         self.player.load_audio(filename[0])
         #self.dismiss_popup()
 
@@ -68,8 +68,8 @@ class MainGui(FloatLayout):
     ''' Reloading the song if it's currently playing.
         Just call self.stop_song and then self.play_pause_song        
     '''
-    def reload_song(self):
-       self.player.reload_song()
+    def reload_audio(self):
+       self.player.reload_audio()
 
     ''' Setting the volume.
         When the value of the slider is changed, this will affect the 
