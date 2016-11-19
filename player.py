@@ -35,6 +35,15 @@ class MainGui(FloatLayout):
        super(MainGui, self).__init__(**kwargs)
        self.library_manager = LibraryManager()
        self.player = MusicPlayer()
+       library_text = self.ids.t_music_library
+       # adding files to library
+       songs = self.library_manager.parse_library()
+       songs_text = ''
+       for song in songs:
+           songs_text = songs_text + song
+
+       library_text.text = songs_text#''.join('aaaa ').join('bbbb')#, 'and something else')
+       #library_text.text = library_text.text.join('bbbb')
 
     def load(self, path, filename):
         #self.player.stop_audio()
