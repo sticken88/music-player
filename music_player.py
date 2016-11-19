@@ -27,8 +27,8 @@ class MusicPlayer():
             exit(-1)
 
       # Setting equalizer prpoperties
-      self.equalizer.set_property('band1', -24.0)
-      self.equalizer.set_property('band2', -24.0)
+      #self.equalizer.set_property('band1', -24.0)
+      #self.equalizer.set_property('band2', -24.0)
 
       self.pipeline.add(self.audio_source, self.decode, self.convert, self.equalizer, self.audio_sink, self.volume)
 
@@ -50,6 +50,7 @@ class MusicPlayer():
 
 
    def load_audio(self, audioResource):
+      self.current_song = audioResource
       self.stop_audio()
       self.audio_source.set_property('location', audioResource)
       self.play_audio()
@@ -85,6 +86,9 @@ class MusicPlayer():
            self.pause_audio()
        else:
            self.play_audio()
+
+   def reload_audio(self):
+       self.load_audio(self.current_song)
 
    def set_volume(self, volume):
        self.volume.set_property('volume', volume)
