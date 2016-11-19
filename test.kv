@@ -3,12 +3,39 @@
         orientation: 'vertical'
 
         BoxLayout:
+            height: 35
+            size_hint_y: None
+
+            Label:
+                text: ''
+
+            Label:
+                text: 'Music Library'
+
+            Label:
+                text: 'Playlists'
+
+        BoxLayout:
             FileChooserListView:
                 id: listfilechooser
                 on_submit: root.load(listfilechooser.path, listfilechooser.selection)
 
-            Button:
-                text: 'Label 2'
+            TextInput:
+                id: music_library
+                readonly: True
+
+            TextInput:
+                id: playlists
+                readonly: True
+
+        #Slider:
+        #    min: 0
+        #    max: 1
+        #    size: 350, 10
+        #    #pos: 400, 30
+        #    step: 0.01
+        #    value: 0.5
+        #    on_value: print("Still to implement")
 
         BoxLayout:
             size_hint_y: None
