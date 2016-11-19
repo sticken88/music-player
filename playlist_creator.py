@@ -43,6 +43,7 @@ class PlaylistManager():
    def read_pls(self, fullname):
       songs_titles = []
       songs_paths = []
+      lines = []
       with open(fullname, "r") as playlist:
          lines = playlist.readlines()
 
