@@ -5,8 +5,13 @@ I just want to create my own music player written in python. I chosed to use kiv
 - Playing music
 - creating, modifying and reproducing playlists
 
-## TODO
-- ASAP: replace kivy SoundLoader class with pure GStreamer in order to have a player indipendent from the GUI used.
+### TODO
+- Integrate LibraryManager into the player
+- Intregrate PlaylistManager into the player
+- Improve the layout
+
+### DONE
+- Replaced kivy SoundLoader class with pure GStreamer in order to have a player indipendent from the GUI used.
 
 ## Dependencies
 - GStreamer v0.1
