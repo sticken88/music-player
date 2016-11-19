@@ -9,6 +9,7 @@ import os
 
 # module to handle audio files
 from music_player import MusicPlayer
+from library_manager import LibraryManager
 
 # class used to show a file system manager to choose a song to play
 '''class LoadDialog(FloatLayout):
@@ -30,14 +31,16 @@ class MainGui(FloatLayout):
     def dismiss_popup(self):
         self._popup.dismiss()'''
 
+    def __init__(self, **kwargs):
+       super(MainGui, self).__init__(**kwargs)
+       self.library_manager = LibraryManager()
+       self.player = MusicPlayer()
+
     def load(self, path, filename):
         #self.player.stop_audio()
         self.player.load_audio(filename[0])
         #self.dismiss_popup()
 
-    def __init__(self, **kwargs):
-       super(MainGui, self).__init__(**kwargs)
-       self.player = MusicPlayer()
       
     '''Playing or pausing a song.
         1) If stopped play it again from the 'elapsed' value.
