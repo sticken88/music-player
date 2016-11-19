@@ -8,16 +8,21 @@ class LibraryManager():
    	self.library_folder = "music_library"
    	self.file_name = "library"
    	#check if the library folder exists, otherwise crete it
-   	if not os.path.isdir(library_folder):
-   		print "'{}' folder doesn't exist, creating it..".format(library_folder)
+   	if not os.path.isdir(self.library_folder):
+   		print "'{}' folder doesn't exist, creating it..".format(self.library_folder)
    		#create the music library folder
-   		os.makedirs(library_folder)
-   		print "..'{}' folder created".format(library_folder)
+   		os.makedirs(self.library_folder)
+   		print "..'{}' folder created".format(self.library_folder)
    	else:
-   		print "'{} folder exists, loading songs..".format(library_folder)
+   		print "'{} folder exists, loading songs..".format(self.library_folder)
 
 
    def parse_library(self):
-       library = open(self.file_name, 'a')
+       songs_paths = []
+       lines = []
 
-l_library = LibraryManager()
+       with open(os.path.join(self.library_folder, self.file_name), "r") as library:
+           for line in library:
+              songs_paths.append(line)
+
+       return songs_paths
