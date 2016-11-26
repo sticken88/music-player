@@ -2,26 +2,31 @@ import pygst
 pygst.require('0.10')
 import gst
 
-'''def on_message(self, bus, message):
-	print message'''
+class RadioPlayer(object):
+	"""docstring for RadioPlayer"""
+	def __init__(self):
+		self.pipeline = gst.Pipeline("RadioPipe")
+		self.player = gst.element_factory_make("playbin2", "player")
 
-pipeline = gst.Pipeline("RadioPipe")
+		if (not self.pipeline or not self.player):
+			print 'Not all elements could be created. Cannot create a Gstreamer pipeline to stream radio...'
+			exit(-1)
 
-player = gst.element_factory_make("playbin2", "player")
+		self.pipeline.add(self.player)
 
-pipeline.add(player)
+		bus = self.pipeline.get_bus()
+		bus.add_signal_watch()
+		bus.connect("message", self.on_message)
 
-## Working uri for radio dj
-#player.set_property('uri', 'http://radiodeejay-lh.akamaihd.net/i/RadioDeejay_Live_1@189857/index_96_a-b.m3u8?sd=10&rebase=on')
 
-## Working uri for Virgin radio
-#player.set_property('uri', 'http://icecast.unitedradio.it/Virgin.mp3')
+	def play_station(self, radioStation):
+		self.player.set_property('uri', radioStation)
+		self.pipeline.set_state(gst.STATE_PLAYING)
+		# getting the bus
 
-## Working uri for RTL 102.5
-player.set_property('uri', 'http://shoutcast.rtl.it:3010/')
-pipeline.set_state(gst.STATE_PLAYING)
-
-bus = pipeline.get_bus()
-msg = bus.timed_pop_filtered(gst.CLOCK_TIME_NONE,
-    gst.MESSAGE_ERROR | gst.MESSAGE_EOS)
-print msg
+	def on_message(self, bus, message):
+		if message.type == gst.MessageType.EOS:
+			print message
+		elif message.type == gst.MessageType.ERROR:
+			error_msg = message.parse_error()
+			print error_msg
