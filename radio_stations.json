@@ -1,0 +1,8 @@
+{
+	"radio_stations":
+	{
+		"Radio Deejay": "http://radiodeejay-lh.akamaihd.net/i/RadioDeejay_Live_1@189857/index_96_a-b.m3u8?sd=10&rebase=on",
+		"RTL 102.5": "http://shoutcast.rtl.it:3010/",
+		"Virgin Radio": "http://icecast.unitedradio.it/Virgin.mp3"
+	} 
+}
