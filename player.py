@@ -1,14 +1,19 @@
+import pygst
+pygst.require('0.10')
+
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 from kivy.factory import Factory
 from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import Screen
 
 import os
 
 # module to handle audio files
 from music_player import MusicPlayer
+from radio import RadioPlayer
 from library_manager import LibraryManager
 
 # class used to show a file system manager to choose a song to play
@@ -16,9 +21,25 @@ from library_manager import LibraryManager
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)'''
 
+# class MusicScreen(Screen):
+#     pass
+
+class RadioScreen(Screen):
+    def __init__(self, **kwargs):
+       super(RadioScreen, self).__init__(**kwargs)
+       self.radio_player = RadioPlayer()
+       print "Radio Screen created"
+
+    def play_station(self, radio):
+      self.radio_player.stop_any_station()
+      print "Station that must be played: {}".format(radio)
+      self.radio_player.play_station(radio)
+
+
 class MainGui(FloatLayout):
 
-    #loadfile = ObjectProperty(None)
+    # ScreenManager that will be used to change between the two screens
+    sm = ObjectProperty()
    
     ''' Shows the popup to choose the file to play
     '''
@@ -44,6 +65,14 @@ class MainGui(FloatLayout):
 
        library_text.text = songs_text#''.join('aaaa ').join('bbbb')#, 'and something else')
        #library_text.text = library_text.text.join('bbbb')
+
+       # Just prepare the screen manager
+       #self.sm.add_widget(MusicScreen(name='MusicScreen'))
+       self.sm.add_widget(RadioScreen(name='RadioScreen'))
+
+    def switch_screen(self, args):
+      self.sm.current = "{}Screen".format(args[1])
+      print "Switching to '{}' screen...".format(args[1])
 
     def load(self, path, filename):
         #self.player.stop_audio()
