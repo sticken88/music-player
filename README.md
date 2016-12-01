@@ -1,14 +1,15 @@
 # music-player
-I just want to create my own music player written in python. I chosed to use kivy as development framework to build the GUI and to properly handle the audio
+I just want to create my own music player and radio streamer in python. I chosed to use kivy as development framework to build the GUI while GStreamer is used to handle the radio streaming and the songs
 
 ## Current Requirements
 - Playing music
-- creating, modifying and reproducing playlists
+- Creating, modifying and reproducing playlists
+- Radio Streaming
 
 ### TODO
+- Improve the layout [Create two distinct screens with their own layouts]
 - Integrate LibraryManager into the player
 - Intregrate PlaylistManager into the player
-- Improve the layout
 
 ### DONE
 - Replaced kivy SoundLoader class with pure GStreamer in order to have a player indipendent from the GUI used.
