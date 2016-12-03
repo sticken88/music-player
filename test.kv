@@ -4,10 +4,6 @@
     BoxLayout:
         orientation: 'vertical'
 
-        ScreenManager:
-            id: sm
-            size_hint_y: 0.6
-
         Spinner:
             height: 35
             size_hint_y: None
@@ -17,6 +13,10 @@
             #height: '108sp'
             #background_color: [0,1,0,1]
             on_text: root.switch_screen(args)
+
+        ScreenManager:
+            id: sm
+            size_hint_y: 0.6
 
 <MusicScreen>:
     BoxLayout:
