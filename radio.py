@@ -40,6 +40,9 @@ class RadioPlayer():
 	def stop_any_station(self):
 		self.pipeline.set_state(gst.STATE_READY)
 
+	def get_stations(self):
+		return self.radio_stations
+
 
 	def on_message(self, bus, message):
 		if message.type == gst.MessageType.EOS:
