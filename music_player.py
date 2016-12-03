@@ -7,6 +7,8 @@ class MusicPlayer():
 
       # flag used to switch between play and pause
       self.playing = False
+      # the current (or last) song being played
+      self.current_song = None
       # Create a Gstreamer pipeline
       self.pipeline = gst.Pipeline('pipeline')
 
@@ -88,7 +90,8 @@ class MusicPlayer():
            self.play_audio()
 
    def reload_audio(self):
-       self.load_audio(self.current_song)
+       if self.current_song is not None:
+           self.load_audio(self.current_song)
 
    def set_volume(self, volume):
        self.volume.set_property('volume', volume)
