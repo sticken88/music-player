@@ -89,8 +89,13 @@
                 on_value: root.set_volume(self.value)
 
 <RadioScreen>:
+    rs_layout: rs_layout
+
     BoxLayout:
+        id: rs_layout
         orientation: 'vertical'
+        padding: 30
+        spacing: 30
 
         Button:
             text: 'Radio Deejay'
