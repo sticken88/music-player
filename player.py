@@ -3,7 +3,7 @@ pygst.require('0.10')
 
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.factory import Factory
 from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
@@ -21,8 +21,21 @@ from library_manager import LibraryManager
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)'''
 
-# class MusicScreen(Screen):
-#     pass
+class MainGui(BoxLayout):
+    # ScreenManager that will be used to change between the two screens
+    sm = ObjectProperty()
+    def __init__(self, **kwargs):
+       super(MainGui, self).__init__(**kwargs)
+
+       # Just prepare the screen manager
+       self.sm.add_widget(MusicScreen(name='MusicScreen'))
+       self.sm.add_widget(RadioScreen(name='RadioScreen'))
+       self.sm.current = "MusicScreen"
+
+    def switch_screen(self, args):
+      self.sm.current = "{}Screen".format(args[1])
+      print "Switching to '{}' screen...".format(args[1])
+
 
 class RadioScreen(Screen):
     def __init__(self, **kwargs):
@@ -36,11 +49,8 @@ class RadioScreen(Screen):
       self.radio_player.play_station(radio)
 
 
-class MainGui(FloatLayout):
+class MusicScreen(Screen):
 
-    # ScreenManager that will be used to change between the two screens
-    sm = ObjectProperty()
-   
     ''' Shows the popup to choose the file to play
     '''
     '''def show_load(self):
@@ -53,7 +63,7 @@ class MainGui(FloatLayout):
         self._popup.dismiss()'''
 
     def __init__(self, **kwargs):
-       super(MainGui, self).__init__(**kwargs)
+       super(MusicScreen, self).__init__(**kwargs)
        self.library_manager = LibraryManager()
        self.player = MusicPlayer()
        library_text = self.ids.t_music_library
@@ -66,13 +76,6 @@ class MainGui(FloatLayout):
        library_text.text = songs_text#''.join('aaaa ').join('bbbb')#, 'and something else')
        #library_text.text = library_text.text.join('bbbb')
 
-       # Just prepare the screen manager
-       #self.sm.add_widget(MusicScreen(name='MusicScreen'))
-       self.sm.add_widget(RadioScreen(name='RadioScreen'))
-
-    def switch_screen(self, args):
-      self.sm.current = "{}Screen".format(args[1])
-      print "Switching to '{}' screen...".format(args[1])
 
     def load(self, path, filename):
         #self.player.stop_audio()
