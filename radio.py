@@ -16,11 +16,14 @@ class RadioPlayer():
 			exit(-1)
 
 		self.pipeline.add(self.player)
-		print "Created GStreamer pipleine..."
+		print "Created GStreamer pipeline..."
 
-		bus = self.pipeline.get_bus()
+		bus = self.player.get_bus()
+		bus.enable_sync_message_emission()
 		bus.add_signal_watch()
-		bus.connect("message", self.on_message)
+		# message::tag should give us only the tags
+		bus.connect("message", self.on_tag_message)
+		#bus.connect("message", self.on_message)
 
 		#load radio stations
 		with open(self.radio_stations_file) as file_stations:
@@ -42,6 +45,11 @@ class RadioPlayer():
 
 	def get_stations(self):
 		return self.radio_stations
+
+	def on_tag_message(self, bus, message):
+		#print message
+		taglist = message.parse_tag()
+		print taglist
 
 
 	def on_message(self, bus, message):
