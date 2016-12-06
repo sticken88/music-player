@@ -8,6 +8,7 @@ from kivy.factory import Factory
 from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
+from kivy.uix.button import Button
 
 import os
 
@@ -38,13 +39,28 @@ class MainGui(BoxLayout):
 
 
 class RadioScreen(Screen):
+
     def __init__(self, **kwargs):
        super(RadioScreen, self).__init__(**kwargs)
        self.radio_player = RadioPlayer()
+
+       # # Getting the layout to dinamically add the buttons
+       rs_layout = self.ids.rs_layout
+
+       # getting the radio stations data
+       stations = self.radio_player.get_stations()
+
+       for radio in stations:
+          btn = Button(text=radio)# , on_press=self.play_station(radio)
+          #btn.bind(on_press=self.pressed)
+          btn.bind(on_press=self.play_station)
+          rs_layout.add_widget(btn)
+
        print "Radio Screen created"
 
-    def play_station(self, radio):
-      self.radio_player.stop_any_station()
+    def play_station(self, instance):
+      # getting the text from the button
+      radio = instance.text
       print "Station that must be played: {}".format(radio)
       self.radio_player.play_station(radio)
 
