@@ -92,10 +92,24 @@
     rs_layout: rs_layout
 
     BoxLayout:
-        id: rs_layout
-        orientation: 'vertical'
-        padding: 30
-        spacing: 30
+
+        BoxLayout:
+            id: rs_layout
+            orientation: 'vertical'
+            padding: 30
+            spacing: 30
+
+        Label:
+            text: 'Label'
+
+#        Slider:
+#            min: 0
+#            max: 1
+#            #size: 350, 10
+#            #pos: 400, 30
+#            step: 0.01
+#            value: 0.5
+#            on_value: root.set_volume(self.value)
 
 #        Button:
 #            text: 'Radio Deejay'
