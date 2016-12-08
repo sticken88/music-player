@@ -16,12 +16,14 @@ I just want to create my own music player and radio streamer in python. I chosed
 #### Radio player
 - Show metadata [e.g. song being played, radio talk, etc.].
 - Resize buttons.
-- Add volume control.
 - Add 'Rec' button to record audio streams [?].
 
 ### DONE
 - Replaced kivy SoundLoader class with pure GStreamer in order to have a player indipendent from the GUI used.
 - Improved (a little bit) the layout [Created two distinct screens with their own layouts].
+
+#### Radio player
+- Added volume control.
 
 ## Dependencies
 - GStreamer v0.1
