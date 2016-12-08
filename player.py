@@ -65,6 +65,11 @@ class RadioScreen(Screen):
       self.radio_player.play_station(radio)
 
 
+    def set_volume(self, volume):
+      self.radio_player.set_volume(volume)
+
+
+
 class MusicScreen(Screen):
 
     ''' Shows the popup to choose the file to play

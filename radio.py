@@ -7,6 +7,8 @@ class RadioPlayer():
 		print "Creating radio player..."
 		self.pipeline = gst.Pipeline("RadioPipe")
 		self.player = gst.element_factory_make("playbin2", "player")
+		# set the initial default value to 0.5
+		self.player.set_property('volume', 0.5)
 
         # json configuration file which holds the radio stations url
 		self.radio_stations_file = 'radio_stations.json'
@@ -17,6 +19,7 @@ class RadioPlayer():
 
 		self.pipeline.add(self.player)
 		print "Created GStreamer pipeline..."
+		print "Default volume set to 0.5"
 
 		bus = self.player.get_bus()
 		bus.enable_sync_message_emission()
@@ -38,14 +41,21 @@ class RadioPlayer():
 		print "{} is about to be played...".format(radio)
 		self.player.set_property('uri', self.radio_stations[radio])
 		self.pipeline.set_state(gst.STATE_PLAYING)
-		# getting the bus
 
+
+	def set_volume(self, volume):
+		print "New volume set {}".format(volume)
+		self.player.set_property('volume', volume)
+
+	
 	def stop_any_station(self):
 		self.pipeline.set_state(gst.STATE_READY)
 
+	
 	def get_stations(self):
 		return self.radio_stations
 
+	
 	def on_tag_message(self, bus, message):
 		#print message
 		taglist = message.parse_tag()
