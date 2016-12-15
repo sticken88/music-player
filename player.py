@@ -9,6 +9,9 @@ from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 from kivy.uix.button import Button
+from kivy.uix.listview import ListView
+from kivy.adapters.simplelistadapter import SimpleListAdapter
+from kivy.uix.label import Label
 
 import os
 
@@ -87,14 +90,33 @@ class MusicScreen(Screen):
        super(MusicScreen, self).__init__(**kwargs)
        self.library_manager = LibraryManager()
        self.player = MusicPlayer()
-       library_text = self.ids.t_music_library
+
+       # # Getting the layout to dinamically add the buttons
+       ml_list_view = self.ids.ml_list_view
+
        # adding files to library
        songs = self.library_manager.parse_library()
-       songs_text = ''
-       for song in songs:
-           songs_text = songs_text + song
 
-       library_text.text = songs_text#''.join('aaaa ').join('bbbb')#, 'and something else')
+       simple_list_adapter = SimpleListAdapter(data=songs, cls=Label)
+
+
+
+       ml_list_view.adapter = simple_list_adapter
+
+       # for song in songs:
+       #    btn = Button(text=os.path.basename(song))# , on_press=self.play_station(radio)
+       #    #btn.bind(on_press=self.pressed)
+       #    #btn.bind(on_press=self.play_station)
+       #    ml_layout.add_widget(btn)
+
+
+
+
+       # songs_text = ''
+       # for song in songs:
+       #     songs_text = songs_text + song
+
+       # library_text.text = songs_text#''.join('aaaa ').join('bbbb')#, 'and something else')
        #library_text.text = library_text.text.join('bbbb')
 
 
