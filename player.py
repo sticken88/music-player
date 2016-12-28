@@ -9,8 +9,8 @@ from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 from kivy.uix.button import Button
-from kivy.uix.listview import ListView
-from kivy.adapters.simplelistadapter import SimpleListAdapter
+from kivy.uix.listview import ListView, ListItemButton
+from kivy.adapters.listadapter import ListAdapter
 from kivy.uix.label import Label
 
 import os
@@ -97,20 +97,16 @@ class MusicScreen(Screen):
        # adding files to library
        songs = self.library_manager.parse_library()
 
-       simple_list_adapter = SimpleListAdapter(data=songs, cls=Label)
-
-
-
-       ml_list_view.adapter = simple_list_adapter
-
        # for song in songs:
-       #    btn = Button(text=os.path.basename(song))# , on_press=self.play_station(radio)
+       #    btn = Button(text=os.path.basename(song), font_size=14)# , on_press=self.play_station(radio)
        #    #btn.bind(on_press=self.pressed)
        #    #btn.bind(on_press=self.play_station)
        #    ml_layout.add_widget(btn)
 
+       list_adapter = ListAdapter(data=songs, cls=ListItemButton, selection_mode='single')
+       list_adapter.bind(on_selection_change=self.selection_change)
 
-
+       ml_list_view.adapter = list_adapter
 
        # songs_text = ''
        # for song in songs:
@@ -118,6 +114,10 @@ class MusicScreen(Screen):
 
        # library_text.text = songs_text#''.join('aaaa ').join('bbbb')#, 'and something else')
        #library_text.text = library_text.text.join('bbbb')
+
+    def selection_change(self, adapter, *args):
+        print "selection changed"
+
 
 
     def load(self, path, filename):
