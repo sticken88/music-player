@@ -1,5 +1,5 @@
 import pygst
-pygst.require('0.10')
+pygst.require('1.0')
 
 from kivy.app import App
 from kivy.lang import Builder
