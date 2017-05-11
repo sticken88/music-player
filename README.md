@@ -8,6 +8,7 @@ I just want to create my own music player and radio streamer in python. I chosed
 
 ### TODO
 - Identify a way to stop radio when a song starts to play and vice versa.
+- Different audios shoud be managed. AAC for example. Look here: http://gstreamer-devel.966125.n4.nabble.com/how-to-play-the-AAC-audio-by-Gstreamer-td2296882.html
 
 #### Music player
 - Review LibraryManager.
