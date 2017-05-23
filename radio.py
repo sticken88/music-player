@@ -1,8 +1,8 @@
-import gi
-gi.require_version('Gst', '1.0')
-from gi.repository import Gst
+import pygst
+pygst.require('0.10')
+import gst
 
-Gst.init(None)
+#Gst.init(None)
 
 import json
 
@@ -11,7 +11,7 @@ class RadioPlayer():
 	def __init__(self):
 		print "Creating radio player..."
 		#self.pipeline = gst.Pipeline("RadioPipe")
-		self.player = Gst.ElementFactory.make("playbin", "player")
+		self.player = gst.element_factory_make("playbin", "player")
 		# set the initial default value to 0.5
 		self.player.set_property('volume', 0.5)
 
@@ -46,7 +46,7 @@ class RadioPlayer():
 		print "{} is about to be played...".format(radio)
 		self.player.set_property('uri', self.radio_stations[radio])
 		#self.pipeline.set_state(gst.STATE_PLAYING)
-		self.player.set_state(Gst.State.PLAYING)
+		self.player.set_state(gst.STATE_PLAYING)
 
 
 	def set_volume(self, volume):
@@ -56,7 +56,7 @@ class RadioPlayer():
 	
 	def stop_any_station(self):
 		#self.pipeline.set_state(gst.STATE_READY)
-		self.player.set_state(Gst.State.READY)
+		self.player.set_state(gst.STATE_READY)
 
 	
 	def get_stations(self):
