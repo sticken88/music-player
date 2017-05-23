@@ -31,7 +31,7 @@ class MainGui(BoxLayout):
        # Just prepare the screen manager
        self.sm.add_widget(MusicScreen(name='MusicScreen'))
        self.sm.add_widget(RadioScreen(name='RadioScreen'))
-       self.sm.current = "RadioScreen"
+       self.sm.current = "MusicScreen"
 
     def switch_screen(self, args):
       self.sm.current = "{}Screen".format(args[1])
@@ -120,7 +120,7 @@ class MusicScreen(Screen):
     def load(self, path, filename):
         pass  
         #self.player.stop_audio()
-        #self.player.load_audio(filename[0])
+        self.player.load_audio(filename[0])
         #self.dismiss_popup()
 
       
