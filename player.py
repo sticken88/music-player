@@ -131,17 +131,17 @@ class MusicScreen(Screen):
     '''
     def play_pause_audio(self):
         pass
-      #self.player.play_pause_audio()
+        self.player.play_pause_audio()
 
 
     def pause_audio(self):
         pass
-       #self.player.pause_audio()       
+        self.player.pause_audio()       
 
 
     def play_audio(self):
         pass
-       #self.player.play_audio()
+        self.player.play_audio()
 
     ''' Stopping the song.
         1) self.elapsed set to 0 so the next song (or the same)
@@ -150,14 +150,14 @@ class MusicScreen(Screen):
     '''    
     def stop_audio(self):
         pass
-       #self.player.stop_audio()
+        self.player.stop_audio()
  
     ''' Reloading the song if it's currently playing.
         Just call self.stop_song and then self.play_pause_song        
     '''
     def reload_audio(self):
         pass
-       #self.player.reload_audio()
+        self.player.reload_audio()
 
     ''' Setting the volume.
         When the value of the slider is changed, this will affect the 
@@ -165,7 +165,7 @@ class MusicScreen(Screen):
     '''
     def set_volume(self, value):
         pass
-       #self.player.set_volume(value)
+        self.player.set_volume(value)
 
 
 class TestApp(App):
