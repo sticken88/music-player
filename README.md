@@ -1,14 +1,13 @@
 # music-player
-I just want to create my own music player and radio streamer in python. I chosed to use kivy as development framework to build the GUI while GStreamer is used to handle the radio streaming and the songs
+I just want to create my own music player and radio streamer in python. I chosed to use kivy as development framework to build the GUI while GStreamer is used to handle the radio streaming and the songs.
 
 ## Current Requirements
 - Play local songs.
-- Creatw, modify and reproduce playlists.
+- Create, modify and reproduce playlists.
 - Radio Streaming.
 
 ### TODO
 - Identify a way to stop radio when a song starts to play and vice versa.
-- Different audios shoud be managed. AAC for example. Look here: http://gstreamer-devel.966125.n4.nabble.com/how-to-play-the-AAC-audio-by-Gstreamer-td2296882.html
 
 #### Music player
 - Review LibraryManager.
@@ -22,6 +21,9 @@ I just want to create my own music player and radio streamer in python. I chosed
 ### DONE
 - Replaced kivy SoundLoader class with pure GStreamer in order to have a player indipendent from the GUI used.
 - Improved (a little bit) the layout [Created two distinct screens with their own layouts].
+
+#### Music player
+- Different audio formats are managed now [mp3 and m4a]. Rewritten the MusicPlayer class in order to use playbin which automatically handles multiple formats.
 
 #### Radio player
 - Added volume control.
