@@ -1,6 +1,3 @@
-import pygst
-pygst.require('0.10')
-
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
@@ -18,7 +15,7 @@ import os
 # module to handle audio files
 from music_player import MusicPlayer
 from radio import RadioPlayer
-from library_manager import LibraryManager
+#from library_manager import LibraryManager
 
 # class used to show a file system manager to choose a song to play
 '''class LoadDialog(FloatLayout):
@@ -38,7 +35,7 @@ class MainGui(BoxLayout):
 
     def switch_screen(self, args):
       self.sm.current = "{}Screen".format(args[1])
-      print "Switching to '{}' screen...".format(args[1])
+      #print "Switching to '{}' screen...".format(args[1])
 
 
 class RadioScreen(Screen):
@@ -88,14 +85,14 @@ class MusicScreen(Screen):
 
     def __init__(self, **kwargs):
        super(MusicScreen, self).__init__(**kwargs)
-       self.library_manager = LibraryManager()
+       #self.library_manager = LibraryManager()
        self.player = MusicPlayer()
 
        # # Getting the layout to dinamically add the buttons
-       ml_list_view = self.ids.ml_list_view
+       #ml_list_view = self.ids.ml_list_view
 
        # adding files to library
-       songs = self.library_manager.parse_library()
+       #songs = self.library_manager.parse_library()
 
        # for song in songs:
        #    btn = Button(text=os.path.basename(song), font_size=14)# , on_press=self.play_station(radio)
@@ -103,10 +100,10 @@ class MusicScreen(Screen):
        #    #btn.bind(on_press=self.play_station)
        #    ml_layout.add_widget(btn)
 
-       list_adapter = ListAdapter(data=songs, cls=ListItemButton, selection_mode='single')
-       list_adapter.bind(on_selection_change=self.selection_change)
+       # list_adapter = ListAdapter(data=songs, cls=ListItemButton, selection_mode='single')
+       # list_adapter.bind(on_selection_change=self.selection_change)
 
-       ml_list_view.adapter = list_adapter
+       # ml_list_view.adapter = list_adapter
 
        # songs_text = ''
        # for song in songs:
@@ -121,6 +118,7 @@ class MusicScreen(Screen):
 
 
     def load(self, path, filename):
+        pass  
         #self.player.stop_audio()
         self.player.load_audio(filename[0])
         #self.dismiss_popup()
@@ -132,17 +130,18 @@ class MusicScreen(Screen):
         2) If it's playing store the elapsed time and stop the song.
     '''
     def play_pause_audio(self):
-      self.player.play_pause_audio()
+        pass
+        self.player.play_pause_audio()
 
 
     def pause_audio(self):
-       self.player.pause_audio()       
+        pass
+        self.player.pause_audio()       
 
 
     def play_audio(self):
-       self.player.play_audio()
-       # TODO: to be fully tested
-       #self.player.look_bus()
+        pass
+        self.player.play_audio()
 
     ''' Stopping the song.
         1) self.elapsed set to 0 so the next song (or the same)
@@ -150,20 +149,23 @@ class MusicScreen(Screen):
         2) actually stop the song
     '''    
     def stop_audio(self):
-       self.player.stop_audio()
+        pass
+        self.player.stop_audio()
  
     ''' Reloading the song if it's currently playing.
         Just call self.stop_song and then self.play_pause_song        
     '''
     def reload_audio(self):
-       self.player.reload_audio()
+        pass
+        self.player.reload_audio()
 
     ''' Setting the volume.
         When the value of the slider is changed, this will affect the 
         volume of the played song.
     '''
     def set_volume(self, value):
-       self.player.set_volume(value)
+        pass
+        self.player.set_volume(value)
 
 
 class TestApp(App):
