@@ -1,7 +1,9 @@
 import sys, os
-import gobject, pygst
+import gobject
+'''import gobject, pygst
 pygst.require('0.10')
-import gst
+import gst'''
+from backend import MusicPlayer
 from PyQt4.QtCore import SIGNAL, SLOT
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
                          QFileDialog
@@ -18,27 +20,32 @@ class MainWindow(QMainWindow):
          self.button.setMinimumSize(90, 0)
          self.setCentralWidget(self.button)
          self.connect(self.button, SIGNAL('clicked()'), self.start_stop)
-         self.player = gst.element_factory_make('playbin', 'player')
-         try:
+
+         self.player = MusicPlayer()
+
+         #self.player = gst.element_factory_make('playbin', 'player')
+         '''try:
              # alsasink pulsesink osssink autoaudiosink
              device = gst.parse_launch('alsasink')
          except gobject.GError:
              print 'Error: could not launch audio sink'
          else:
-             self.player.set_property('audio-sink', device)
-             self.bus = self.player.get_bus()
-             self.bus.add_signal_watch()
-             self.bus.connect('message', self.on_message)
+             self.player.set_property('audio-sink', device)'''
+         '''self.bus = self.player.get_bus()
+         self.bus.add_signal_watch()
+         self.bus.connect('message', self.on_message)'''
 
      def start_stop(self):
          if self.button.text() == 'Start':
              filepath = QFileDialog.getOpenFileName(self, 'Choose File')
              if filepath:
                  self.button.setText('Stop')
-                 self.player.set_property('uri', 'file://' + filepath)
-                 self.player.set_state(gst.STATE_PLAYING)
+                 #self.player.set_property('uri', 'file://' + filepath)
+                 self.player.load_audio(filepath)
+                 #self.player.set_state(gst.STATE_PLAYING)
          else:
-             self.player.set_state(gst.STATE_NULL)
+             #self.player.set_state(gst.STATE_NULL)
+             self.player.stop_audio()
              self.button.setText('Start')
 
      def on_message(self, bus, message):
