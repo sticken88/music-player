@@ -47,7 +47,7 @@ class MusicPlayer():
    def play_audio(self):
       # Play the song
       #self.pipeline.set_state(gst.STATE_PLAYING)
-      self.player.set_state(gst.STATE_PLAYING)
+      self.player.set_state(Gst.State.PLAYING)
       self.playing = True
       print "Playing audio.."
 
@@ -60,13 +60,13 @@ class MusicPlayer():
 
    def pause_audio(self):
       #self.pipeline.set_state(gst.STATE_PAUSED)
-      self.player.set_state(gst.STATE_PAUSED)
+      self.player.set_state(Gst.State.PAUSED)
       self.playing = False
       print "Pausing audio.."
 
 
    def stop_audio(self):
-      self.player.set_state(gst.STATE_READY)
+      self.player.set_state(Gst.State.READY)
       self.playing = False
       print "Stopping audio.."
 
