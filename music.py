@@ -1,9 +1,11 @@
 import sys, os
-import gobject
+from gi.repository import GObject
 '''import gobject, pygst
 pygst.require('0.10')
 import gst'''
+
 from backend import MusicPlayer
+
 from PyQt4.QtCore import SIGNAL, SLOT
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
                          QFileDialog
@@ -47,7 +49,7 @@ class MainWindow(QMainWindow):
              #self.player.set_state(gst.STATE_NULL)
              self.player.stop_audio()
              self.button.setText('Start')
-
+'''
      def on_message(self, bus, message):
          t = message.type
          if t == gst.MESSAGE_EOS:
@@ -58,11 +60,11 @@ class MainWindow(QMainWindow):
              err, debug = message.parse_error()
              print 'Error: %s' % err, debug
              self.button.setText('Start')
-
+'''
 
 if __name__ == '__main__':
 
-     gobject.threads_init()
+     GObject.threads_init()
      qApp = QApplication(sys.argv)
      qApp.connect(qApp, SIGNAL('lastWindowClosed()'),
                   qApp, SLOT('quit()'))
