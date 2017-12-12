@@ -1,12 +1,17 @@
-import pygst
-pygst.require('0.10')
-import gst
+import gi
+gi.require_version('Gst', '1.0')
+gi.require_version('GstBase', '1.0')
+
+from gi.repository import GObject, Gst, GstBase, GObject
 
 class MusicPlayer():
 
    def __init__(self):
+      # Initialize the GStreamer framework
+      Gst.init(None)
       # initialize playbin element to reproduce different audio encoding
-      self.player = gst.element_factory_make("playbin", "player")
+      self.player = Gst.ElementFactory.make("playbin", "player")
+
       # set the initial default value to 0.5
       self.player.set_property('volume', 0.5)
 
@@ -20,8 +25,7 @@ class MusicPlayer():
          exit(-1)
 
       #self.pipeline.add(self.player)
-      print "Created GStreamer playbin..."
-      print "...default volume set to 0.5"
+      print "Created GStreamer playbin backend, default volume set to 0.5..."
 
       bus = self.player.get_bus()
       #bus.enable_sync_message_emission()
@@ -53,7 +57,7 @@ class MusicPlayer():
       self.msg = self.bus.timed_pop_filtered(gst.CLOCK_TIME_NONE,
                   gst.MESSAGE_ERROR | gst.MESSAGE_EOS)'''
 
-   
+
    def pause_audio(self):
       #self.pipeline.set_state(gst.STATE_PAUSED)
       self.player.set_state(gst.STATE_PAUSED)
