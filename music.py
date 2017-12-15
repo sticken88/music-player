@@ -24,7 +24,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.player = MusicPlayer()
 
          # setting the methods to be called
-         self.playButton.clicked.connect(self.playPause)
+         self.playButton.clicked.connect(self.playPauseAudio)
+         self.stopButton.clicked.connect(self.stopAudio)
+         self.browseButton.clicked.connect(self.browseFs)
 
          '''try:
              # alsasink pulsesink osssink autoaudiosink
@@ -37,16 +39,27 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.bus.add_signal_watch()
          self.bus.connect('message', self.on_message)'''
 
-     def playPause(self):
+     def playPauseAudio(self):
          print "Start Button pressed!!"
-         #self.player.play_pause_audio()
+         self.player.play_pause_audio()
          if self.playButton.text() == 'Play':
              self.playButton.setText('Pause')
          else:
              self.playButton.setText('Play')
 
-     def start_stop(self):
-         if self.button.text() == 'Start':
+
+     def stopAudio(self):
+         self.player.stop_audio()
+
+
+     def browseFs(self):
+         filepath = QFileDialog.getOpenFileName(self, 'Choose File')
+         if filepath:
+             self.player.load_audio(filepath)
+         else:
+            print "Cannot load any song.."
+
+         '''if self.button.text() == 'Start':
              filepath = QFileDialog.getOpenFileName(self, 'Choose File')
              if filepath:
                  self.button.setText('Stop')
@@ -56,7 +69,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          else:
              #self.player.set_state(gst.STATE_NULL)
              self.player.stop_audio()
-             self.button.setText('Start')
+             self.button.setText('Start')'''
 '''
      def on_message(self, bus, message):
          t = message.type
