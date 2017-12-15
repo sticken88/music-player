@@ -72,10 +72,13 @@ class MusicPlayer():
 
 
    def play_pause_audio(self):
-       if self.playing:
-           self.pause_audio()
-       else:
-           self.play_audio()
+      if self.current_song is not None:
+         if self.playing:
+            self.pause_audio()
+         else:
+            self.play_audio()
+      else:
+         print "A song must be selected.."
 
    def reload_audio(self):
        if self.current_song is not None:
