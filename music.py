@@ -6,26 +6,26 @@ import gst'''
 
 from backend import MusicPlayer
 
+from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import SIGNAL, SLOT
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
                          QFileDialog
 
+Ui_MainWindow, QtBaseClass = uic.loadUiType('frontend.ui')
+#class MainWindow(QMainWindow):
+class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
-class MainWindow(QMainWindow):
      def __init__(self):
-         QMainWindow.__init__(self)
-         self.setWindowTitle('Audio-Player')
-         self.resize(120, 50)
-         self.move(500, 500)
-         self.button = QPushButton(self)
-         self.button.setText('Start')
-         self.button.setMinimumSize(90, 0)
-         self.setCentralWidget(self.button)
-         self.connect(self.button, SIGNAL('clicked()'), self.start_stop)
+         QtGui.QMainWindow.__init__(self)
+         Ui_MainWindow.__init__(self)
+         self.setupUi(self)
 
+         # instantiate the MusicPlayer object
          self.player = MusicPlayer()
 
-         #self.player = gst.element_factory_make('playbin', 'player')
+         # setting the methods to be called
+         self.playButton.clicked.connect(self.playPause)
+
          '''try:
              # alsasink pulsesink osssink autoaudiosink
              device = gst.parse_launch('alsasink')
@@ -36,6 +36,14 @@ class MainWindow(QMainWindow):
          '''self.bus = self.player.get_bus()
          self.bus.add_signal_watch()
          self.bus.connect('message', self.on_message)'''
+
+     def playPause(self):
+         print "Start Button pressed!!"
+         #self.player.play_pause_audio()
+         if self.playButton.text() == 'Play':
+             self.playButton.setText('Pause')
+         else:
+             self.playButton.setText('Play')
 
      def start_stop(self):
          if self.button.text() == 'Start':
@@ -61,6 +69,7 @@ class MainWindow(QMainWindow):
              print 'Error: %s' % err, debug
              self.button.setText('Start')
 '''
+
 
 if __name__ == '__main__':
 
