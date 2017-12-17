@@ -85,7 +85,6 @@ class MusicPlayer():
            self.load_audio(self.current_song)
 
    def set_volume(self, volume):
-       #self.volume.set_property('volume', volume)
        self.player.set_property('volume', volume)
 
 
