@@ -20,6 +20,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          Ui_MainWindow.__init__(self)
          self.setupUi(self)
 
+         # set the default properties of the volume slider
+         self.volumeSlider.setMinimum(0)
+         self.volumeSlider.setMaximum(100)
+         self.volumeSlider.setValue(50)
+         self.volumeSlider.setTickInterval(1)
+
          # instantiate the MusicPlayer object
          self.player = MusicPlayer()
 
@@ -27,6 +33,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.playButton.clicked.connect(self.playPauseAudio)
          self.stopButton.clicked.connect(self.stopAudio)
          self.browseButton.clicked.connect(self.browseFs)
+         self.volumeSlider.valueChanged.connect(self.changeVolume)
 
          '''try:
              # alsasink pulsesink osssink autoaudiosink
@@ -40,7 +47,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.bus.connect('message', self.on_message)'''
 
      def playPauseAudio(self):
-         print "Start Button pressed!!"
          self.player.play_pause_audio()
          if self.playButton.text() == 'Play':
              self.playButton.setText('Pause')
@@ -51,6 +57,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
      def stopAudio(self):
          self.player.stop_audio()
 
+     def changeVolume(self):
+        self.player.set_volume(float(self.volumeSlider.value())/100)
 
      def browseFs(self):
          filepath = QFileDialog.getOpenFileName(self, 'Choose File')
