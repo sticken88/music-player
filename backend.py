@@ -89,15 +89,10 @@ class MusicPlayer():
 
 
    def on_message(self, bus, message):
-
-      print message.type
-      '''if message.type == gst.MessageType.ERROR:
+      #print message.type
+      if message.type == Gst.MessageType.ERROR:
          error_msg = message.parse_error()
-         print error_msg'''
-      '''if message.type == gst.MessageType.EOS:
-         #self.pipeline.set_state(gst.STATE_READY)
+         print error_msg
+      if message.type == Gst.MessageType.EOS:
+         # here the pipeline has reached the EOS, i.e. a song has been played
          print message
-      elif message.type == gst.MessageType.ERROR:
-         error_msg = message.parse_error()
-         #self.pipeline.set_state(gst.STATE_NULL)
-         print error_msg'''
