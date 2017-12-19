@@ -1,12 +1,17 @@
+# TODO: keep in mind that this class uses PyQt and it extends QObject
 import gi
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
 
 from gi.repository import GObject, Gst, GstBase, GObject
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot
 
-class MusicPlayer():
+class MusicPlayer(QObject):
+   # declare a new signal
+   eosReached = pyqtSignal()
 
    def __init__(self):
+      QObject.__init__(self)
       # Initialize the GStreamer framework
       Gst.init(None)
       # initialize playbin element to reproduce different audio encoding
@@ -19,6 +24,9 @@ class MusicPlayer():
       self.playing = False
       # the current (or last) song being played
       self.current_song = None
+
+      # connect the signal with the slot
+      self.eosReached.connect(self.next_song)
 
       if (not self.player):
          print 'Not all elements could be created. Cannot create a Gstreamer pipeline to stream songs...'
@@ -84,6 +92,9 @@ class MusicPlayer():
        if self.current_song is not None:
            self.load_audio(self.current_song)
 
+   def next_song(self):
+       print "Next song must be played.."
+
    def set_volume(self, volume):
        self.player.set_property('volume', volume)
 
@@ -95,4 +106,4 @@ class MusicPlayer():
          print error_msg
       if message.type == Gst.MessageType.EOS:
          # here the pipeline has reached the EOS, i.e. a song has been played
-         print message
+         self.eosReached.emit()
