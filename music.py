@@ -63,7 +63,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
      def browseFs(self):
          filepath = QFileDialog.getOpenFileName(self, 'Choose File')
          if filepath:
-             self.player.load_audio(filepath)
+             self.player.load_audio(str(filepath))
          else:
             print "Cannot load any song.."
 
