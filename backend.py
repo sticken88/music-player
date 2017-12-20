@@ -1,4 +1,5 @@
 # TODO: keep in mind that this class uses PyQt and it extends QObject
+import os
 import gi
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
@@ -25,6 +26,11 @@ class MusicPlayer(QObject):
       # the current (or last) song being played
       self.current_song = None
 
+      # data structure to hold the songs
+      self.song_index = 0
+      self.songs_dict = {}
+      self.songs_list = []
+
       # connect the signal with the slot
       self.eosReached.connect(self.next_song)
 
@@ -43,7 +49,8 @@ class MusicPlayer(QObject):
 
 
    def load_audio(self, audio_uri):
-      # audioResource is the full path of the song in the file system
+      self.add_song_to_library(audio_uri)
+      # audio_uri is the full path of the song in the file system
       self.current_song = audio_uri
       #print self.current_song
       self.stop_audio()
@@ -94,10 +101,29 @@ class MusicPlayer(QObject):
 
    def next_song(self):
        print "Next song must be played.."
+       self.song_index = 0
+       #get the next song
+       self.current_song = self.songs_list[self.song_index]
+       # set as current song
+       self.player.set_property('uri', "file://" + self.current_song)
+       self.play_audio()
+
+
 
    def set_volume(self, volume):
        self.player.set_property('volume', volume)
 
+
+   def add_song_to_library(self, song_uri):
+       # the key is the song title
+       song_name = os.path.basename(song_uri)
+       # check if the song has been already inserted
+       if not self.songs_dict.has_key(song_name):
+          self.songs_dict[song_name] = song_uri
+          self.songs_list.append(song_uri)
+          print "Added song {}-{}. {} songs in the library".format(song_name, song_uri, len(self.songs_dict))
+       else:
+          print "Song {} already present in the music library..".format(song_uri)
 
    def on_message(self, bus, message):
       #print message.type
