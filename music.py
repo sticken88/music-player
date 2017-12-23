@@ -9,7 +9,7 @@ from backend import MusicPlayer
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import SIGNAL, SLOT
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
-                         QFileDialog
+                         QFileDialog, QListView, QListWidgetItem
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType('frontend.ui')
 #class MainWindow(QMainWindow):
@@ -35,6 +35,32 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.browseButton.clicked.connect(self.browseFs)
          self.volumeSlider.valueChanged.connect(self.changeVolume)
 
+         self.songsListWidget.itemDoubleClicked.connect(self.play_song)
+
+         # dummy QListView example
+         dummy_songs = []
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/01 - Oronero.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/02 - Danza.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/03 - Scelgo ancora te.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/04 - Credo.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/05 - Per non pensarti.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/06 - Vanita.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/07 - Posso farcela.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/08 - Come acrobati.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/09 - Mutevole.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/10 - Tolto e dato.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/11 - Amore quanto basta.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/12 - Sempre si cambia.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/13 - Grande Maestro.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/14 - Regina di notte.mp3")
+         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/15 - Non fa niente.mp3")
+         self.songsListWidget.addItems(dummy_songs)
+         '''for i in range(10):
+            item = QListWidgetItem("Song %i" % i)
+            self.songsListWidget.addItem(item)'''
+
+         #self.songsListWidget.show()
+
          '''try:
              # alsasink pulsesink osssink autoaudiosink
              device = gst.parse_launch('alsasink')
@@ -45,6 +71,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          '''self.bus = self.player.get_bus()
          self.bus.add_signal_watch()
          self.bus.connect('message', self.on_message)'''
+
+     def play_song(self, song):
+         print "Selected {}".format(song.text())
+         self.player.load_audio(str(song.text()))
 
      def playPauseAudio(self):
          self.player.play_pause_audio()
