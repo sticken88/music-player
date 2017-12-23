@@ -32,7 +32,7 @@ class MusicPlayer(QObject):
       self.songs_list = []
 
       # connect the signal with the slot
-      self.eosReached.connect(self.next_song)
+      #self.eosReached.connect(self.next_song)
 
       if (not self.player):
          print 'Not all elements could be created. Cannot create a Gstreamer pipeline to stream songs...'
@@ -49,7 +49,7 @@ class MusicPlayer(QObject):
 
 
    def load_audio(self, audio_uri):
-      self.add_song_to_library(audio_uri)
+      #self.add_song_to_library(audio_uri)
       # audio_uri is the full path of the song in the file system
       self.current_song = audio_uri
       #print self.current_song
@@ -99,14 +99,14 @@ class MusicPlayer(QObject):
        if self.current_song is not None:
            self.load_audio(self.current_song)
 
-   def next_song(self):
+   '''def next_song(self):
        print "Next song must be played.."
-       self.song_index = 0
+       #self.song_index = 0
        #get the next song
        self.current_song = self.songs_list[self.song_index]
        # set as current song
        self.player.set_property('uri', "file://" + self.current_song)
-       self.play_audio()
+       self.play_audio()'''
 
 
 
