@@ -35,6 +35,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.browseButton.clicked.connect(self.browseFs)
          self.volumeSlider.valueChanged.connect(self.changeVolume)
 
+         self.player.eosReached.connect(self.next_song)
+
          self.songsListWidget.itemDoubleClicked.connect(self.play_song)
 
          # dummy QListView example
@@ -74,7 +76,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
      def play_song(self, song):
          print "Selected {}".format(song.text())
+         # Get the current index. It will be incremented later if needed
+         self.currentSongIndex = self.songsListWidget.row(song)
          self.player.load_audio(str(song.text()))
+
+     def next_song(self):
+         # used to select the next song
+         self.currentSongIndex += 1
+         self.nextSong = self.songsListWidget.item(self.currentSongIndex)
+         self.player.load_audio(str(self.nextSong.text()))
 
      def playPauseAudio(self):
          self.player.play_pause_audio()
