@@ -16,6 +16,9 @@ Ui_MainWindow, QtBaseClass = uic.loadUiType('frontend.ui')
 # define a custom QWidget class used to model the i-th widget
 # reference: https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
 class CustomQWidget (QtGui.QWidget):
+    # string to hold the path of the song
+    media_path = ""
+
     def __init__ (self, parent = None):
         super(CustomQWidget, self).__init__(parent)
         self.textQVBoxLayout = QtGui.QVBoxLayout()
@@ -29,6 +32,29 @@ class CustomQWidget (QtGui.QWidget):
         #self.allQHBoxLayout.addLayout(self.textQVBoxLayout, 1)
         #self.setLayout(self.allQHBoxLayout)
         self.setLayout(self.textQVBoxLayout)
+
+    def set_artist_name(self, artist_name):
+        self.textArtistQLabel.setText(artist_name)
+
+    def set_song_title(self, song_title):
+        self.textTitleQLabel.setText(song_title)
+
+    def set_media_path(self, media_path):
+        self.media_path = media_path
+
+    def get_media_path(self):
+        return self.media_path
+
+# subclassing QListWidgetItem to hold the path of the media
+class CustomQListWidgetItem(QListWidgetItem):
+    def __init__(self, media_path, parent = None):
+        super(CustomQListWidgetItem, self).__init__(parent)
+        self.media_path = media_path
+
+    # method to get the media path
+    def get_media_path(self):
+        return self.media_path
+
 
 #class MainWindow(QMainWindow):
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
@@ -57,8 +83,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          self.songsListWidget.itemDoubleClicked.connect(self.play_song)
 
+         # Create a CustomQWidget for each item that must be added to the list
+         songCustomWidget = CustomQWidget()
+         songCustomWidget.set_artist_name("Giorgia")
+         songCustomWidget.set_song_title("01 - Oronero.mp3")
+         songCustomWidget.set_media_path("/home/matteo/Music/Giorgia - Oronero (2016)/01 - Oronero.mp3")
+
+         customQListWidgetItem = CustomQListWidgetItem(songCustomWidget.get_media_path()) #QtGui.QListWidgetItem(self.songsListWidget)
+         # Set size hint and media path
+         customQListWidgetItem.setSizeHint(songCustomWidget.sizeHint())
+
+         # Add QListWidgetItem into QListWidget
+         self.songsListWidget.addItem(customQListWidgetItem)
+         self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
+
+         self.setCentralWidget(self.songsListWidget)
+
          # dummy QListView example
-         dummy_songs = []
+         '''dummy_songs = []
          dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/01 - Oronero.mp3")
          dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/02 - Danza.mp3")
          dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/03 - Scelgo ancora te.mp3")
@@ -74,7 +116,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/13 - Grande Maestro.mp3")
          dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/14 - Regina di notte.mp3")
          dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/15 - Non fa niente.mp3")
-         self.songsListWidget.addItems(dummy_songs)
+         self.songsListWidget.addItems(dummy_songs)'''
          '''for i in range(10):
             item = QListWidgetItem("Song %i" % i)
             self.songsListWidget.addItem(item)'''
@@ -93,10 +135,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.bus.connect('message', self.on_message)'''
 
      def play_song(self, song):
-         print "Selected {}".format(song.text())
-         # Get the current index. It will be incremented later if needed
+         #print type(song)
+         print "Selected {}".format(song.get_media_path())
+         '''# Get the current index. It will be incremented later if needed
          self.currentSongIndex = self.songsListWidget.row(song)
-         self.player.load_audio(str(song.text()))
+         self.player.load_audio(str(song.text()))'''
 
      def next_song(self):
          # used to select the next song
