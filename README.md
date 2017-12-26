@@ -7,8 +7,13 @@ I just want to create my own music player and radio streamer in python. I chosed
 - Radio Streaming.
 
 ### TODO
-- Identify a way to stop radio when a song starts to play and vice versa.
-- Add comments to use doxygen or sphinx
+- Implement slider with duration of the song
+- Move the custom Song class to a different python module?
+- Visit the filesystem to scan all the songs o just the current selected folder?
+- Filter all the music format
+- Properly separate modules [e.g list songs among others?]
+[POSTPONED] - Identify a way to stop radio when a song starts to play and vice versa.
+[POSTPONED] - Add comments to use doxygen or sphinx
 
 #### Music player
 - Review LibraryManager.
