@@ -1,11 +1,14 @@
-import sys, os
+import sys
 from gi.repository import GObject
-'''import gobject, pygst
-pygst.require('0.10')
-import gst'''
 
+# to walk the filesystem
+from os import listdir
+from os.path import isfile, join, expanduser
+
+# to play songs
 from backend import MusicPlayer
 
+# to hanlde the Qt GUI
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import SIGNAL, SLOT
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
@@ -59,6 +62,7 @@ class CustomQListWidgetItem(QListWidgetItem):
 #class MainWindow(QMainWindow):
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
+     music_path = ""
      def __init__(self):
          QtGui.QMainWindow.__init__(self)
          Ui_MainWindow.__init__(self)
@@ -79,12 +83,32 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.browseButton.clicked.connect(self.browseFs)
          self.volumeSlider.valueChanged.connect(self.changeVolume)
 
-         self.player.eosReached.connect(self.next_song)
+         self.player.eosReached.connect(self.play_next_song)
 
          self.songsListWidget.itemDoubleClicked.connect(self.play_song)
 
+         # set basic variable used to visit the filesystem
+         home = expanduser("~")
+         music_path = home + "/Music/Giorgia - Oronero (2016)/"
+
+         for file_song in listdir(music_path):
+             if isfile(join(music_path, file_song)) and file_song.endswith('.mp3'):
+                # Create a CustomQWidget for each item that must be added to the list
+                songCustomWidget = CustomQWidget()
+                songCustomWidget.set_artist_name("Giorgia")
+                songCustomWidget.set_song_title(file_song)
+                songCustomWidget.set_media_path(music_path + file_song)
+
+                customQListWidgetItem = CustomQListWidgetItem(songCustomWidget.get_media_path()) #QtGui.QListWidgetItem(self.songsListWidget)
+                # Set size hint and media path
+                customQListWidgetItem.setSizeHint(songCustomWidget.sizeHint())
+
+                # Add QListWidgetItem into QListWidget
+                self.songsListWidget.addItem(customQListWidgetItem)
+                self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
+
          # Create a CustomQWidget for each item that must be added to the list
-         songCustomWidget = CustomQWidget()
+         '''songCustomWidget = CustomQWidget()
          songCustomWidget.set_artist_name("Giorgia")
          songCustomWidget.set_song_title("01 - Oronero.mp3")
          songCustomWidget.set_media_path("/home/matteo/Music/Giorgia - Oronero (2016)/01 - Oronero.mp3")
@@ -95,7 +119,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          # Add QListWidgetItem into QListWidget
          self.songsListWidget.addItem(customQListWidgetItem)
-         self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
+         self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)'''
 
          #self.setCentralWidget(self.songsListWidget)
 
@@ -131,11 +155,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.player.load_audio(song.get_media_path())
          self.playButton.setText('Pause')
 
-     def next_song(self):
+     def play_next_song(self):
          # used to select the next song
          self.currentSongIndex += 1
          self.next_song = self.songsListWidget.item(self.currentSongIndex)
-         self.player.load_audio(next_song.get_media_path())
+         print "Next song {}".format(self.next_song.get_media_path())
+         self.player.load_audio(self.next_song.get_media_path())
 
      def playPauseAudio(self):
          self.player.play_pause_audio()
