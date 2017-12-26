@@ -12,6 +12,24 @@ from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
                          QFileDialog, QListView, QListWidgetItem
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType('frontend.ui')
+
+# define a custom QWidget class used to model the i-th widget
+# reference: https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
+class CustomQWidget (QtGui.QWidget):
+    def __init__ (self, parent = None):
+        super(CustomQWidget, self).__init__(parent)
+        self.textQVBoxLayout = QtGui.QVBoxLayout()
+        self.textArtistQLabel    = QtGui.QLabel()
+        self.textTitleQLabel  = QtGui.QLabel()
+        self.textQVBoxLayout.addWidget(self.textArtistQLabel)
+        self.textQVBoxLayout.addWidget(self.textTitleQLabel)
+        #self.allQHBoxLayout  = QtGui.QHBoxLayout()
+        #self.iconQLabel      = QtGui.QLabel()
+        #self.allQHBoxLayout.addWidget(self.iconQLabel, 0)
+        #self.allQHBoxLayout.addLayout(self.textQVBoxLayout, 1)
+        #self.setLayout(self.allQHBoxLayout)
+        self.setLayout(self.textQVBoxLayout)
+
 #class MainWindow(QMainWindow):
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
