@@ -129,6 +129,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # Get the current index. It will be incremented later if needed
          self.currentSongIndex = self.songsListWidget.row(song)
          self.player.load_audio(song.get_media_path())
+         self.playButton.setText('Pause')
 
      def next_song(self):
          # used to select the next song
@@ -146,6 +147,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
      def stopAudio(self):
          self.player.stop_audio()
+         self.playButton.setText('Play')
 
      def changeVolume(self):
         self.player.set_volume(float(self.volumeSlider.value())/100)
