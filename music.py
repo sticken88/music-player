@@ -161,6 +161,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.next_song = self.songsListWidget.item(self.currentSongIndex)
          print "Next song {}".format(self.next_song.get_media_path())
          self.player.load_audio(self.next_song.get_media_path())
+         self.songsListWidget.setCurrentRow(self.currentSongIndex)
 
      def playPauseAudio(self):
          self.player.play_pause_audio()
