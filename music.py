@@ -97,7 +97,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.songsListWidget.addItem(customQListWidgetItem)
          self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
 
-         self.setCentralWidget(self.songsListWidget)
+         #self.setCentralWidget(self.songsListWidget)
 
          # dummy QListView example
          '''dummy_songs = []
@@ -123,29 +123,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          #self.songsListWidget.show()
 
-         '''try:
-             # alsasink pulsesink osssink autoaudiosink
-             device = gst.parse_launch('alsasink')
-         except gobject.GError:
-             print 'Error: could not launch audio sink'
-         else:
-             self.player.set_property('audio-sink', device)'''
-         '''self.bus = self.player.get_bus()
-         self.bus.add_signal_watch()
-         self.bus.connect('message', self.on_message)'''
 
      def play_song(self, song):
-         #print type(song)
          print "Selected {}".format(song.get_media_path())
-         '''# Get the current index. It will be incremented later if needed
+         # Get the current index. It will be incremented later if needed
          self.currentSongIndex = self.songsListWidget.row(song)
-         self.player.load_audio(str(song.text()))'''
+         self.player.load_audio(song.get_media_path())
 
      def next_song(self):
          # used to select the next song
          self.currentSongIndex += 1
-         self.nextSong = self.songsListWidget.item(self.currentSongIndex)
-         self.player.load_audio(str(self.nextSong.text()))
+         self.next_song = self.songsListWidget.item(self.currentSongIndex)
+         self.player.load_audio(next_song.get_media_path())
 
      def playPauseAudio(self):
          self.player.play_pause_audio()
