@@ -107,46 +107,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.songsListWidget.addItem(customQListWidgetItem)
                 self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
 
-         # Create a CustomQWidget for each item that must be added to the list
-         '''songCustomWidget = CustomQWidget()
-         songCustomWidget.set_artist_name("Giorgia")
-         songCustomWidget.set_song_title("01 - Oronero.mp3")
-         songCustomWidget.set_media_path("/home/matteo/Music/Giorgia - Oronero (2016)/01 - Oronero.mp3")
-
-         customQListWidgetItem = CustomQListWidgetItem(songCustomWidget.get_media_path()) #QtGui.QListWidgetItem(self.songsListWidget)
-         # Set size hint and media path
-         customQListWidgetItem.setSizeHint(songCustomWidget.sizeHint())
-
-         # Add QListWidgetItem into QListWidget
-         self.songsListWidget.addItem(customQListWidgetItem)
-         self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)'''
-
-         #self.setCentralWidget(self.songsListWidget)
-
-         # dummy QListView example
-         '''dummy_songs = []
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/01 - Oronero.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/02 - Danza.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/03 - Scelgo ancora te.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/04 - Credo.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/05 - Per non pensarti.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/06 - Vanita.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/07 - Posso farcela.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/08 - Come acrobati.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/09 - Mutevole.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/10 - Tolto e dato.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/11 - Amore quanto basta.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/12 - Sempre si cambia.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/13 - Grande Maestro.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/14 - Regina di notte.mp3")
-         dummy_songs.append("/home/matteo/Music/Giorgia - Oronero (2016)/15 - Non fa niente.mp3")
-         self.songsListWidget.addItems(dummy_songs)'''
-         '''for i in range(10):
-            item = QListWidgetItem("Song %i" % i)
-            self.songsListWidget.addItem(item)'''
-
-         #self.songsListWidget.show()
-
 
      def play_song(self, song):
          print "Selected {}".format(song.get_media_path())
@@ -155,6 +115,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.player.load_audio(song.get_media_path())
          self.playButton.setText('Pause')
 
+
      def play_next_song(self):
          # used to select the next song
          self.currentSongIndex += 1
@@ -162,6 +123,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          print "Next song {}".format(self.next_song.get_media_path())
          self.player.load_audio(self.next_song.get_media_path())
          self.songsListWidget.setCurrentRow(self.currentSongIndex)
+
 
      def playPauseAudio(self):
          self.player.play_pause_audio()
@@ -175,8 +137,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.player.stop_audio()
          self.playButton.setText('Play')
 
+
      def changeVolume(self):
         self.player.set_volume(float(self.volumeSlider.value())/100)
+
 
      def browseFs(self):
          filepath = QFileDialog.getOpenFileName(self, 'Choose File')
@@ -184,30 +148,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
              self.player.load_audio(str(filepath))
          else:
             print "Cannot load any song.."
-
-         '''if self.button.text() == 'Start':
-             filepath = QFileDialog.getOpenFileName(self, 'Choose File')
-             if filepath:
-                 self.button.setText('Stop')
-                 #self.player.set_property('uri', 'file://' + filepath)
-                 self.player.load_audio(filepath)
-                 #self.player.set_state(gst.STATE_PLAYING)
-         else:
-             #self.player.set_state(gst.STATE_NULL)
-             self.player.stop_audio()
-             self.button.setText('Start')'''
-'''
-     def on_message(self, bus, message):
-         t = message.type
-         if t == gst.MESSAGE_EOS:
-             self.player.set_state(gst.STATE_NULL)
-             self.button.setText('Start')
-         elif t == gst.MESSAGE_ERROR:
-             self.player.set_state(gst.STATE_NULL)
-             err, debug = message.parse_error()
-             print 'Error: %s' % err, debug
-             self.button.setText('Start')
-'''
 
 
 if __name__ == '__main__':

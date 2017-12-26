@@ -67,12 +67,6 @@ class MusicPlayer(QObject):
       print "Playing audio.."
 
 
-      '''self.bus = self.pipeline.get_bus()
-
-      self.msg = self.bus.timed_pop_filtered(gst.CLOCK_TIME_NONE,
-                  gst.MESSAGE_ERROR | gst.MESSAGE_EOS)'''
-
-
    def pause_audio(self):
       #self.pipeline.set_state(gst.STATE_PAUSED)
       self.player.set_state(Gst.State.PAUSED)
@@ -94,6 +88,7 @@ class MusicPlayer(QObject):
             self.play_audio()
       else:
          print "A song must be selected.."
+
 
    def reload_audio(self):
        if self.current_song is not None:
@@ -124,6 +119,7 @@ class MusicPlayer(QObject):
           print "Added song {}-{}. {} songs in the library".format(song_name, song_uri, len(self.songs_dict))
        else:
           print "Song {} already present in the music library..".format(song_uri)
+
 
    def on_message(self, bus, message):
       #print message.type
