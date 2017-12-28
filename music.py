@@ -12,9 +12,9 @@ from backend import MusicPlayer
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import SIGNAL, SLOT
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
-                         QFileDialog, QListView, QListWidgetItem
+                         QFileDialog, QListView, QListWidgetItem, QIcon
 
-Ui_MainWindow, QtBaseClass = uic.loadUiType('frontend.ui')
+Ui_MainWindow, QtBaseClass = uic.loadUiType('./gui/frontend.ui')
 
 # define a custom QWidget class used to model the i-th widget
 # reference: https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
@@ -87,6 +87,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          self.songsListWidget.itemDoubleClicked.connect(self.play_song)
 
+         # set icons for the button
+         self.stopButton.setIcon(QtGui.QIcon('./icons/stop.png'))
+         self.playButton.setIcon(QtGui.QIcon('./icons/play.png'))
+
          # set basic variable used to visit the filesystem
          home = expanduser("~")
          music_path = home + "/Music/Giorgia - Oronero (2016)/"
@@ -114,6 +118,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.currentSongIndex = self.songsListWidget.row(song)
          self.player.load_audio(song.get_media_path())
          self.playButton.setText('Pause')
+         self.playButton.setIcon(QtGui.QIcon('./icons/pause.png'))
 
 
      def play_next_song(self):
@@ -129,13 +134,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.player.play_pause_audio()
          if self.playButton.text() == 'Play':
              self.playButton.setText('Pause')
+             self.playButton.setIcon(QtGui.QIcon('./icons/pause.png'))
          else:
              self.playButton.setText('Play')
+             self.playButton.setIcon(QtGui.QIcon('./icons/play.png'))
 
 
      def stopAudio(self):
          self.player.stop_audio()
          self.playButton.setText('Play')
+         self.playButton.setIcon(QtGui.QIcon('./icons/play.png'))
 
 
      def changeVolume(self):
