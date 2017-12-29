@@ -91,6 +91,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.stopButton.setIcon(QtGui.QIcon('./icons/stop.png'))
          self.playButton.setIcon(QtGui.QIcon('./icons/play.png'))
 
+         # set model in tree view
+         self.build_file_system()
+
          # set basic variable used to visit the filesystem
          home = expanduser("~")
          music_path = home + "/Music/Giorgia - Oronero (2016)/"
@@ -110,6 +113,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # Add QListWidgetItem into QListWidget
                 self.songsListWidget.addItem(customQListWidgetItem)
                 self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
+
+
+     def build_file_system(self):
+
+         self.music_root = expanduser("~") + "/Music"
+         self.fs_model = QtGui.QFileSystemModel(self)
+         self.fs_model.setRootPath(self.music_root)
+         self.indexRoot = self.fs_model.index(self.fs_model.rootPath())
+
+         self.fileSystemView.setModel(self.fs_model)
+         self.fileSystemView.setRootIndex(self.indexRoot)
+
 
 
      def play_song(self, song):
