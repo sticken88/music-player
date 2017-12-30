@@ -7,13 +7,7 @@ I just want to create my own music player and radio streamer in python. I chosed
 - Radio Streaming.
 
 ### TODO
-- Implement slider with duration of the song
-- Move the custom Song class to a different python module?
-- Visit the filesystem to scan all the songs o just the current selected folder?
-- Filter all the music format
-- Properly separate modules [e.g list songs among others?]
-- [POSTPONED] Identify a way to stop radio when a song starts to play and vice versa.
-- [POSTPONED] Add comments to use doxygen or sphinx
+- Identify a way to stop radio when a song starts to play and vice versa.
 
 #### Music player
 - Review LibraryManager.
@@ -37,7 +31,3 @@ I just want to create my own music player and radio streamer in python. I chosed
 ## Dependencies
 - GStreamer v0.1
 - Kivy library installed for python 2. Instructions: https://kivy.org/docs/installation/installation-linux.html#ubuntu-11-10-or-newer
-
-#### Qt 4 version dependencies
-- PyQt 4 [sudo apt-get install python-qt4 python-qt4-dbus python-qt4-dev python-qt4-doc]
-- GStreamer 1.0 [it comes with Linux Mint]
