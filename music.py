@@ -2,7 +2,7 @@ import sys
 from gi.repository import GObject
 
 # to walk the filesystem
-from os import listdir
+from os import listdir, walk
 from os.path import isfile, join, expanduser
 
 # to play songs
@@ -94,29 +94,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # set model in tree view
          self.build_file_system()
 
-         # set basic variable used to visit the filesystem
-         home = expanduser("~")
-         music_path = home + "/Music/Giorgia - Oronero (2016)/"
-
-         for file_song in listdir(music_path):
-             if isfile(join(music_path, file_song)) and file_song.endswith('.mp3'):
-                # Create a CustomQWidget for each item that must be added to the list
-                songCustomWidget = CustomQWidget()
-                songCustomWidget.set_artist_name("Giorgia")
-                songCustomWidget.set_song_title(file_song)
-                songCustomWidget.set_media_path(music_path + file_song)
-
-                customQListWidgetItem = CustomQListWidgetItem(songCustomWidget.get_media_path()) #QtGui.QListWidgetItem(self.songsListWidget)
-                # Set size hint and media path
-                customQListWidgetItem.setSizeHint(songCustomWidget.sizeHint())
-
-                # Add QListWidgetItem into QListWidget
-                self.songsListWidget.addItem(customQListWidgetItem)
-                self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
+         # create music list
+         self.populate_song_list()
 
 
      def build_file_system(self):
-
          self.music_root = expanduser("~") + "/Music"
          self.fs_model = QtGui.QFileSystemModel(self)
          self.fs_model.setRootPath(self.music_root)
@@ -124,6 +106,30 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          self.fileSystemView.setModel(self.fs_model)
          self.fileSystemView.setRootIndex(self.indexRoot)
+
+
+     def populate_song_list(self):
+         # set basic variable used to visit the filesystem
+         home = expanduser("~")
+         music_path = join(home, "Music/")
+
+         for root, subdirs, files in walk(music_path):
+             for file_song in files: #listdir(music_path):
+                if isfile(join(music_path, file_song)) and file_song.endswith('.mp3'):
+                   # Create a CustomQWidget for each item that must be added to the list
+                   songCustomWidget = CustomQWidget()
+                   # TODO: properly extract artist name
+                   songCustomWidget.set_artist_name("Unknown")
+                   songCustomWidget.set_song_title(file_song)
+                   songCustomWidget.set_media_path(music_path + file_song)
+
+                   customQListWidgetItem = CustomQListWidgetItem(songCustomWidget.get_media_path()) #QtGui.QListWidgetItem(self.songsListWidget)
+                   # Set size hint and media path
+                   customQListWidgetItem.setSizeHint(songCustomWidget.sizeHint())
+
+                   # Add QListWidgetItem into QListWidget
+                   self.songsListWidget.addItem(customQListWidgetItem)
+                   self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
 
 
 
