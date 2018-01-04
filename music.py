@@ -1,5 +1,5 @@
 import sys
-from gi.repository import GObject
+from gi.repository import GObject, GLib
 
 # to walk the filesystem
 from os import listdir, walk
@@ -10,7 +10,7 @@ from backend import MusicPlayer
 
 # to hanlde the Qt GUI
 from PyQt4 import QtCore, QtGui, uic
-from PyQt4.QtCore import SIGNAL, SLOT
+from PyQt4.QtCore import SIGNAL, SLOT, QTimer
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
                          QFileDialog, QListView, QListWidgetItem, QIcon
 
@@ -74,6 +74,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.volumeSlider.setValue(50)
          self.volumeSlider.setTickInterval(1)
 
+         # set fake value for the elapsed time slider
+         self.elapsedTimeSlider.setMinimum(0)
+         self.elapsedTimeSlider.setMaximum(250)
+
          # instantiate the MusicPlayer object
          self.player = MusicPlayer()
 
@@ -84,6 +88,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.volumeSlider.valueChanged.connect(self.changeVolume)
 
          self.player.eosReached.connect(self.play_next_song)
+         #self.player.playingSet.connect(self.set_song_duration)
 
          self.songsListWidget.itemDoubleClicked.connect(self.play_song)
 
@@ -96,6 +101,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          # create music list
          self.populate_song_list()
+
+         self.durationTimer = QTimer()
+         self.durationTimer.timeout.connect(self.set_song_elapsed_time)
+         self.durationTimer.start(1000)
+
+         # register a function that GLib will call every second
+         #GLib.timeout_add_seconds(1, self.get_stream_duration)
+
+
+     # called when a pipeline is set to PLAYING.
+     # Triggered by a signal from backend.py
+     def set_song_elapsed_time(self):
+         #self.player.get_song_duration()
+         self.elapsedTimeSlider.setValue(self.player.get_song_duration())
+         print "Duration: {0}".format(self.player.get_song_duration())
 
 
      def build_file_system(self):
