@@ -97,7 +97,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.playButton.setIcon(QtGui.QIcon('./icons/play.png'))
 
          # set model in tree view
-         self.build_file_system()
+         #self.build_file_system()
 
          # create music list
          self.populate_song_list()
@@ -118,14 +118,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          print "Duration: {0}".format(self.player.get_song_duration())
 
 
-     def build_file_system(self):
+     '''def build_file_system(self):
          self.music_root = expanduser("~") + "/Music"
          self.fs_model = QtGui.QFileSystemModel(self)
          self.fs_model.setRootPath(self.music_root)
          self.indexRoot = self.fs_model.index(self.fs_model.rootPath())
 
          self.fileSystemView.setModel(self.fs_model)
-         self.fileSystemView.setRootIndex(self.indexRoot)
+         self.fileSystemView.setRootIndex(self.indexRoot)'''
 
 
      def populate_song_list(self):
