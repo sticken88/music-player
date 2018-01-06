@@ -1,5 +1,6 @@
 # music-player
-I just want to create my own music player and radio streamer in python. I chosed to use kivy as development framework to build the GUI while GStreamer is used to handle the radio streaming and the songs.
+Music player and radio streamer written in python that uses GStreamer as multimedia framework.
+PyQt 4 is used to develop the GUI as of today but ideally other GUIs will be supported.
 
 ## Current Requirements
 - Play local songs.
@@ -12,32 +13,11 @@ I just want to create my own music player and radio streamer in python. I chosed
 - Visit the filesystem to scan all the songs o just the current selected folder?
 - Filter all the music format
 - Properly separate modules [e.g list songs among others?]
+- [music-player] review LibraryManager and PlaylistManager
+- [radio-player] show metadata (e.g. song being played, radio talk, etc.) and add 'Rec' button to record audio streams [?]
 - [POSTPONED] Identify a way to stop radio when a song starts to play and vice versa.
 - [POSTPONED] Add comments to use doxygen or sphinx
 
-#### Music player
-- Review LibraryManager.
-- Review PlaylistManager.
-
-#### Radio player
-- Show metadata [e.g. song being played, radio talk, etc.].
-- Resize buttons.
-- Add 'Rec' button to record audio streams [?].
-
-### DONE
-- Replaced kivy SoundLoader class with pure GStreamer in order to have a player indipendent from the GUI used.
-- Improved (a little bit) the layout [Created two distinct screens with their own layouts].
-
-#### Music player
-- Different audio formats are managed now [mp3 and m4a]. Rewritten the MusicPlayer class in order to use playbin which automatically handles multiple formats.
-
-#### Radio player
-- Added volume control.
-
 ## Dependencies
-- GStreamer v0.1
-- Kivy library installed for python 2. Instructions: https://kivy.org/docs/installation/installation-linux.html#ubuntu-11-10-or-newer
-
-#### Qt 4 version dependencies
-- PyQt 4 [sudo apt-get install python-qt4 python-qt4-dbus python-qt4-dev python-qt4-doc]
-- GStreamer 1.0 [it comes with Linux Mint]
+- PyQt 4 `sudo apt-get install python-qt4 python-qt4-dbus python-qt4-dev python-qt4-doc`
+- GStreamer 1.0, see [the official documentation](https://gstreamer.freedesktop.org/documentation/installing/on-linux.html)
