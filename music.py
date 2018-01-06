@@ -76,7 +76,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          # set fake value for the elapsed time slider
          self.elapsedTimeSlider.setMinimum(0)
-         self.elapsedTimeSlider.setMaximum(250)
 
          # instantiate the MusicPlayer object
          self.player = MusicPlayer()
@@ -114,8 +113,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
      # Triggered by a signal from backend.py
      def set_song_elapsed_time(self):
          #self.player.get_song_duration()
-         self.elapsedTimeSlider.setValue(self.player.get_song_duration())
+         self.elapsedTimeSlider.setValue(self.player.get_song_elapsed())
+         self.elapsedTimeSlider.setMaximum(self.player.get_song_duration())
+         print "Position: {0}".format(self.player.get_song_elapsed())
          print "Duration: {0}".format(self.player.get_song_duration())
+
 
 
      '''def build_file_system(self):
