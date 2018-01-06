@@ -86,6 +86,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.browseButton.clicked.connect(self.browseFs)
          self.volumeSlider.valueChanged.connect(self.changeVolume)
 
+         self.elapsedTimeSlider.sliderReleased.connect(self.seek_song_position)
+
          self.player.eosReached.connect(self.play_next_song)
          #self.player.playingSet.connect(self.set_song_duration)
 
@@ -118,6 +120,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          print "Position: {0}".format(self.player.get_song_elapsed())
          print "Duration: {0}".format(self.player.get_song_duration())
 
+
+     # Called when elapsedTimeSlider has been released
+     def seek_song_position(self):
+         print "New value {0}".format(self.elapsedTimeSlider.value())
+         self.player.seek_song_position(self.elapsedTimeSlider.value())
 
 
      '''def build_file_system(self):
