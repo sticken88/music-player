@@ -1,8 +1,8 @@
 import sys
-from gi.repository import GObject
+from gi.repository import GObject, GLib
 
 # to walk the filesystem
-from os import listdir
+from os import listdir, walk
 from os.path import isfile, join, expanduser
 
 # to play songs
@@ -10,7 +10,7 @@ from backend import MusicPlayer
 
 # to hanlde the Qt GUI
 from PyQt4 import QtCore, QtGui, uic
-from PyQt4.QtCore import SIGNAL, SLOT
+from PyQt4.QtCore import SIGNAL, SLOT, QTimer
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
                          QFileDialog, QListView, QListWidgetItem, QIcon
 
@@ -74,6 +74,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.volumeSlider.setValue(50)
          self.volumeSlider.setTickInterval(1)
 
+         # set fake value for the elapsed time slider
+         self.elapsedTimeSlider.setMinimum(0)
+
          # instantiate the MusicPlayer object
          self.player = MusicPlayer()
 
@@ -83,7 +86,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.browseButton.clicked.connect(self.browseFs)
          self.volumeSlider.valueChanged.connect(self.changeVolume)
 
+         self.elapsedTimeSlider.sliderReleased.connect(self.seek_song_position)
+
          self.player.eosReached.connect(self.play_next_song)
+         #self.player.playingSet.connect(self.set_song_duration)
 
          self.songsListWidget.itemDoubleClicked.connect(self.play_song)
 
@@ -92,38 +98,68 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.playButton.setIcon(QtGui.QIcon('./icons/play.png'))
 
          # set model in tree view
-         self.build_file_system()
+         #self.build_file_system()
 
-         # set basic variable used to visit the filesystem
-         home = expanduser("~")
-         music_path = home + "/Music/Giorgia - Oronero (2016)/"
+         # create music list
+         self.populate_song_list()
 
-         for file_song in listdir(music_path):
-             if isfile(join(music_path, file_song)) and file_song.endswith('.mp3'):
-                # Create a CustomQWidget for each item that must be added to the list
-                songCustomWidget = CustomQWidget()
-                songCustomWidget.set_artist_name("Giorgia")
-                songCustomWidget.set_song_title(file_song)
-                songCustomWidget.set_media_path(music_path + file_song)
+         self.durationTimer = QTimer()
+         self.durationTimer.timeout.connect(self.set_song_elapsed_time)
+         self.durationTimer.start(1000)
 
-                customQListWidgetItem = CustomQListWidgetItem(songCustomWidget.get_media_path()) #QtGui.QListWidgetItem(self.songsListWidget)
-                # Set size hint and media path
-                customQListWidgetItem.setSizeHint(songCustomWidget.sizeHint())
-
-                # Add QListWidgetItem into QListWidget
-                self.songsListWidget.addItem(customQListWidgetItem)
-                self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
+         # register a function that GLib will call every second
+         #GLib.timeout_add_seconds(1, self.get_stream_duration)
 
 
-     def build_file_system(self):
+     # called when a pipeline is set to PLAYING.
+     # Triggered by a signal from backend.py
+     def set_song_elapsed_time(self):
+         #self.player.get_song_duration()
+         self.elapsedTimeSlider.setValue(self.player.get_song_elapsed())
+         self.elapsedTimeSlider.setMaximum(self.player.get_song_duration())
+         print "Position: {0}".format(self.player.get_song_elapsed())
+         print "Duration: {0}".format(self.player.get_song_duration())
 
+
+     # Called when elapsedTimeSlider has been released
+     def seek_song_position(self):
+         print "New value {0}".format(self.elapsedTimeSlider.value())
+         self.player.seek_song_position(self.elapsedTimeSlider.value())
+
+
+     '''def build_file_system(self):
          self.music_root = expanduser("~") + "/Music"
          self.fs_model = QtGui.QFileSystemModel(self)
          self.fs_model.setRootPath(self.music_root)
          self.indexRoot = self.fs_model.index(self.fs_model.rootPath())
 
          self.fileSystemView.setModel(self.fs_model)
-         self.fileSystemView.setRootIndex(self.indexRoot)
+         self.fileSystemView.setRootIndex(self.indexRoot)'''
+
+
+     def populate_song_list(self):
+         # set basic variable used to visit the filesystem
+         home = expanduser("~")
+         music_path = join(home, "Music/")
+
+         for current_dir, subdirs, files in walk(music_path):
+             for file_song in files:
+                full_path_file = join(current_dir, file_song)
+                if isfile(full_path_file) and file_song.endswith('.mp3'):
+                   # Create a CustomQWidget for each item that must be added to the list
+                   songCustomWidget = CustomQWidget()
+                   # TODO: properly extract artist name
+                   songCustomWidget.set_artist_name("Unknown")
+                   songCustomWidget.set_song_title(file_song)
+                   songCustomWidget.set_media_path(full_path_file)
+
+                   customQListWidgetItem = CustomQListWidgetItem(songCustomWidget.get_media_path()) #QtGui.QListWidgetItem(self.songsListWidget)
+                   # Set size hint and media path
+                   customQListWidgetItem.setSizeHint(songCustomWidget.sizeHint())
+
+                   # Add QListWidgetItem into QListWidget
+                   self.songsListWidget.addItem(customQListWidgetItem)
+                   self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
 
 
 
