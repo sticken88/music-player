@@ -116,7 +116,15 @@ class MusicPlayer(QObject):
        if not ret:
            return 0
        else:
+           # returning the seconds
            return current / Gst.SECOND
+
+
+
+   def seek_song_position(self, seconds):
+       # required by GSt
+       nanoseconds = seconds * Gst.SECOND
+       self.player.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, nanoseconds)
 
 
    def set_volume(self, volume):
