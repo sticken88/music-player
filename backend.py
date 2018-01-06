@@ -103,13 +103,21 @@ class MusicPlayer(QObject):
        self.player.set_property('uri', "file://" + self.current_song)
        self.play_audio()'''
 
-   def get_song_duration(self):
+   def get_song_elapsed(self):
        ret, current = self.player.query_position(Gst.Format.TIME)
-
        if not ret:
            return 0
        else:
            return current / Gst.SECOND
+
+
+   def get_song_duration(self):
+       ret, current = self.player.query_duration(Gst.Format.TIME)
+       if not ret:
+           return 0
+       else:
+           return current / Gst.SECOND
+
 
    def set_volume(self, volume):
        self.player.set_property('volume', volume)
