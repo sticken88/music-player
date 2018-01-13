@@ -2,6 +2,7 @@ import sys
 from gi.repository import GObject, GLib
 
 # to walk the filesystem
+import os
 from os import listdir, walk
 from os.path import isfile, join, expanduser
 
@@ -12,7 +13,8 @@ from backend import MusicPlayer
 from playlist_creator import PlaylistManager
 
 # custom Qt Objects
-from custom_qt_objects import CustomQWidget, CustomQListWidgetItem
+from custom_qt_objects import CustomQWidget, CustomQListWidgetItem, \
+                              CustomPlaylistQWidget
 
 # to hanlde the Qt GUI
 from PyQt4 import QtCore, QtGui, uic
@@ -116,9 +118,23 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # get all the playlists
          playlists_list = self.playlist_manager.get_playlists()
 
-         # populate the list
+         # populate the list with the custom object
          for playlist in playlists_list:
-            self.playlistListWidget.addItem(playlist)
+            # create and populate a custom object
+            customPlaylistObject = CustomPlaylistQWidget()
+            #os.path.splitext(str(playlist))[0]
+            customPlaylistObject.set_playlist_name(os.path.splitext(str(playlist))[0])
+            customPlaylistObject.set_playlist_path(playlist)
+
+            customQListWidgetItem = CustomQListWidgetItem(customPlaylistObject.get_playlist_path())
+            # Set size hint and media path
+            customQListWidgetItem.setSizeHint(customPlaylistObject.sizeHint())
+
+            # Add QListWidgetItem into QListWidget
+            self.playlistListWidget.addItem(customQListWidgetItem)
+            self.playlistListWidget.setItemWidget(customQListWidgetItem, customPlaylistObject)
+
+            self.playlistListWidget.addItem(customQListWidgetItem)
 
 
      def parse_playlist(self, item):
