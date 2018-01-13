@@ -8,6 +8,9 @@ from os.path import isfile, join, expanduser
 # to play songs
 from backend import MusicPlayer
 
+# to manage playlist
+from playlist_creator import PlaylistManager
+
 # to hanlde the Qt GUI
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import SIGNAL, SLOT, QTimer
@@ -80,6 +83,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # instantiate the MusicPlayer object
          self.player = MusicPlayer()
 
+         #instantiate the PlaylistManager object
+         self.playlist_manager = PlaylistManager()
+
          # setting the methods to be called
          self.playButton.clicked.connect(self.playPauseAudio)
          self.stopButton.clicked.connect(self.stopAudio)
@@ -93,6 +99,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          self.songsListWidget.itemDoubleClicked.connect(self.play_song)
 
+         self.playlistListWidget.itemClicked.connect(self.parse_playlist)
+
          # set icons for the button
          self.stopButton.setIcon(QtGui.QIcon('./icons/stop.png'))
          self.playButton.setIcon(QtGui.QIcon('./icons/play.png'))
@@ -103,6 +111,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # create music list
          self.populate_song_list()
 
+         # create playlists list
+         self.populate_playlist_list()
+
          self.durationTimer = QTimer()
          self.durationTimer.timeout.connect(self.set_song_elapsed_time)
          self.durationTimer.start(1000)
@@ -110,6 +121,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # register a function that GLib will call every second
          #GLib.timeout_add_seconds(1, self.get_stream_duration)
 
+
+     def populate_songs_list(self):
+         # clear the current songs
+         self.songsListWidget.clear()
 
      # called when a pipeline is set to PLAYING.
      # Triggered by a signal from backend.py
@@ -135,6 +150,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          self.fileSystemView.setModel(self.fs_model)
          self.fileSystemView.setRootIndex(self.indexRoot)'''
+
+     def populate_playlist_list(self):
+         # get all the playlists
+         playlists_list = self.playlist_manager.get_playlists()
+
+         # populate the list
+         for playlist in playlists_list:
+            self.playlistListWidget.addItem(playlist)
+
+
+     def parse_playlist(self, playlist):
+         print "Got {0} playlist to parse".format(playlist.text())
 
 
      def populate_song_list(self):
