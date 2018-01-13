@@ -33,6 +33,29 @@ class CustomQWidget (QtGui.QWidget):
     def get_media_path(self):
         return self.media_path
 
+
+# subclassing QWidget to model a playlist object
+class CustomPlaylistQWidget (QtGui.QWidget):
+    # string to hold the path of the song
+    playlist_path = ""
+
+    def __init__ (self, parent = None):
+        super(CustomPlaylistQWidget, self).__init__(parent)
+        self.playlist_name = QtGui.QLabel()
+
+    def set_playlist_name(self, name):
+        self.playlist_name.setText(name)
+
+    def set_playlist_path(self, path):
+        self.playlist_path = path
+
+    def get_playlist_path(self):
+        return self.playlist_path
+
+    def get_playlist_name(self):
+        return self.playlist_name
+
+
 # subclassing QListWidgetItem to hold the path of the media
 class CustomQListWidgetItem(QListWidgetItem):
     def __init__(self, media_path, parent = None):
