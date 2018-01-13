@@ -1,6 +1,24 @@
+# to walk the filesystem
 import os
+from os import walk
+from os.path import join
 
 class PlaylistManager():
+
+   playlist_path = join("./", "playlists/")
+
+   def get_playlists(self):
+      # create the playlists folder if missing
+      if not os.path.exists(self.playlist_path):
+         os.makedirs(self.playlist_path)
+
+         # get the name of all the playlists
+      print "Reading the name of all the playlists"
+      for current_dir, subdirs, files in walk(self.playlist_path):
+         print "Found {0} playlists".format(len(files))
+
+      return files
+
 
    ''' Generic method which determines the correct playlist format
        and parses it accordingly
@@ -24,7 +42,7 @@ class PlaylistManager():
       #base_path = "/home/matteo/Music"
       with open("{}.pls".format(name), "w") as playlist:
          # variable to count the songs
-         songs=1 
+         songs=1
          playlist.write("[playlist]\n")
          playlist.write("Title={}\n".format(name))
          for file in os.listdir(base_path):
@@ -73,12 +91,3 @@ class PlaylistManager():
                #playlist.write("file://{}\n".format(os.path.join(base_path, file).replace(" ", "%20").replace("(", "%28").replace(")", "%29")))
 
 # .replace("", "'")
-
-
-manager = PlaylistManager()
-manager.create_pls("/home/matteo/Music", "nuova_pls")
-manager.create_m3u8("/home/matteo/Music", "nuova_pls")
-titles, paths = manager.read_playlist("nuova_pls.pls")
-
-#for i in range(len(titles)):
-   #print titles[i] + " || " + paths[i]
