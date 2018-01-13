@@ -160,8 +160,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.playlistListWidget.addItem(playlist)
 
 
-     def parse_playlist(self, playlist):
-         print "Got {0} playlist to parse".format(playlist.text())
+     def parse_playlist(self, item):
+         playlist = str(item.text())
+         print "Got {0} playlist to parse".format(playlist)
+
+         # parse the playlist
+         songs, paths = self.playlist_manager.read_pls(playlist)
+         print "Playlist {0} has {1} songs".format(playlist, len(songs))
+
+         #TODO: creste a custom object to model playlist object[full path and name wo .pls]
+         #TODO: make 'populate_song_list' to handle generic lists
 
 
      def populate_song_list(self):
