@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1366</width>
-    <height>768</height>
+    <width>856</width>
+    <height>422</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QPushButton" name="playButton">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>480</y>
+     <x>60</x>
+     <y>380</y>
      <width>88</width>
      <height>29</height>
     </rect>
@@ -29,8 +29,8 @@
   <widget class="QPushButton" name="stopButton">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>480</y>
+     <x>170</x>
+     <y>380</y>
      <width>88</width>
      <height>29</height>
     </rect>
@@ -57,17 +57,17 @@
     <rect>
      <x>40</x>
      <y>70</y>
-     <width>731</width>
-     <height>381</height>
+     <width>501</width>
+     <height>281</height>
     </rect>
    </property>
   </widget>
   <widget class="QSlider" name="elapsedTimeSlider">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>490</y>
-     <width>441</width>
+     <x>290</x>
+     <y>380</y>
+     <width>251</width>
      <height>20</height>
     </rect>
    </property>
@@ -78,10 +78,10 @@
   <widget class="QSlider" name="volumeSlider">
    <property name="geometry">
     <rect>
-     <x>810</x>
-     <y>70</y>
+     <x>570</x>
+     <y>80</y>
      <width>20</width>
-     <height>401</height>
+     <height>271</height>
     </rect>
    </property>
    <property name="orientation">
@@ -91,10 +91,10 @@
   <widget class="QListWidget" name="playlistListWidget">
    <property name="geometry">
     <rect>
-     <x>880</x>
+     <x>610</x>
      <y>70</y>
-     <width>321</width>
-     <height>381</height>
+     <width>221</width>
+     <height>281</height>
     </rect>
    </property>
   </widget>
