@@ -77,12 +77,25 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # create playlists list
          self.populate_playlist_list()
 
+         # create context menu
+         self.songsListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+         self.songsListWidget.customContextMenuRequested.connect(self.onContext)
+
          self.durationTimer = QTimer()
          self.durationTimer.timeout.connect(self.set_song_elapsed_time)
          self.durationTimer.start(1000)
 
          # register a function that GLib will call every second
          #GLib.timeout_add_seconds(1, self.get_stream_duration)
+
+
+
+     def onContext(self, position):
+         # Create a menu
+         menu = QtGui.QMenu("Menu", self)
+         menu.addAction("Add to playlist")
+         # Show the context menu.
+         menu.exec_(self.songsListWidget.mapToGlobal(position))
 
 
      def populate_songs_list(self):
