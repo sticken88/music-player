@@ -71,8 +71,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # set model in tree view
          #self.build_file_system()
 
-         # create music list
-         self.populate_song_list()
+         # create music list from file system
+         self.populate_song_list_from_fs()
 
          # create playlists list
          self.populate_playlist_list()
@@ -123,7 +123,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # create and populate a custom object
             customPlaylistObject = CustomPlaylistQWidget()
             #os.path.splitext(str(playlist))[0]
-            customPlaylistObject.set_playlist_name(os.path.splitext(str(playlist))[0])
+            #get the base name wo extension
+            playlist_name = os.path.splitext(os.path.basename(playlist))[0]
+            customPlaylistObject.set_playlist_name(playlist_name)
             customPlaylistObject.set_playlist_path(playlist)
 
             customQListWidgetItem = CustomQListWidgetItem(customPlaylistObject.get_playlist_path())
@@ -138,18 +140,54 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
      def parse_playlist(self, item):
-         playlist = str(item.text())
+         playlist = str(item.get_media_path())
          print "Got {0} playlist to parse".format(playlist)
 
          # parse the playlist
          songs, paths = self.playlist_manager.read_pls(playlist)
+
+         # populate the songs list
+         if songs:
+             # remove the current songs
+             self.songsListWidget.clear()
+             # create the list
+             self.populate_song_list_from_playlist(songs, paths)
+         else:
+             print "No song in the playlist"
+
+
          print "Playlist {0} has {1} songs".format(playlist, len(songs))
+         print "{0} and {1}".format(len(songs), len(paths))
 
          #TODO: creste a custom object to model playlist object[full path and name wo .pls]
          #TODO: make 'populate_song_list' to handle generic lists
 
 
-     def populate_song_list(self):
+     # populate the songs list from a playlist file
+     def populate_song_list_from_playlist(self, songs, paths):
+         # loop over the songs in the playlist
+         for i in range(0, len(songs)):
+             # get the i-th item
+             file_song = songs[i]
+             full_path_file = paths[i]
+
+             songCustomWidget = CustomQWidget()
+             # TODO: properly extract artist name
+             songCustomWidget.set_artist_name("Unknown")
+             songCustomWidget.set_song_title(file_song)
+             songCustomWidget.set_media_path(full_path_file)
+
+             customQListWidgetItem = CustomQListWidgetItem(songCustomWidget.get_media_path()) #QtGui.QListWidgetItem(self.songsListWidget)
+             # Set size hint and media path
+             customQListWidgetItem.setSizeHint(songCustomWidget.sizeHint())
+
+             # Add QListWidgetItem into QListWidget
+             self.songsListWidget.addItem(customQListWidgetItem)
+             self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
+
+
+
+     def populate_song_list_from_fs(self):
          # set basic variable used to visit the filesystem
          home = expanduser("~")
          music_path = join(home, "Music/")
