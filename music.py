@@ -77,10 +77,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # create playlists list
          self.populate_playlist_list()
 
-         # create context menu
+         # create context menu for the song list
          self.songsListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
          self.songsListWidget.customContextMenuRequested.connect(self.onContext)
 
+         # timer used to update the slider which shows the elapsed time of a song
          self.durationTimer = QTimer()
          self.durationTimer.timeout.connect(self.set_song_elapsed_time)
          self.durationTimer.start(1000)
@@ -172,7 +173,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          print "Playlist {0} has {1} songs".format(playlist, len(songs))
          print "{0} and {1}".format(len(songs), len(paths))
 
-         #TODO: creste a custom object to model playlist object[full path and name wo .pls]
          #TODO: make 'populate_song_list' to handle generic lists
 
 
