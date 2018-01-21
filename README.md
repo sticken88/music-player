@@ -9,7 +9,6 @@ PyQt 4 is used to develop the GUI as of today but ideally other GUIs will be sup
 
 ### TODO
 - Implement slider with duration of the song
-- Move the custom Song class to a different python module?
 - Visit the filesystem to scan all the songs o just the current selected folder?
 - Filter all the music format
 - Properly separate modules [e.g list songs among others?]

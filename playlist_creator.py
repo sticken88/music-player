@@ -1,6 +1,31 @@
+# to walk the filesystem
 import os
+from os import walk
+from os.path import join
 
 class PlaylistManager():
+
+   playlist_path = join("./", "playlists/")
+
+   def get_playlists(self):
+      # create the playlists folder if missing
+      if not os.path.exists(self.playlist_path):
+         os.makedirs(self.playlist_path)
+
+      # declaring a list to hold the playlists
+      self.playlists_list = []
+
+      # get the name of all the playlists
+      print "Reading the name of all the playlists"
+      for current_dir, subdirs, files in walk(self.playlist_path):
+         # iterate on all the playlists
+         for playlist in files:
+            full_path_playlist = join(current_dir, playlist)
+            self.playlists_list.append(full_path_playlist)
+         print "Found {0} playlists".format(len(files))
+
+      return self.playlists_list
+
 
    ''' Generic method which determines the correct playlist format
        and parses it accordingly
@@ -24,7 +49,7 @@ class PlaylistManager():
       #base_path = "/home/matteo/Music"
       with open("{}.pls".format(name), "w") as playlist:
          # variable to count the songs
-         songs=1 
+         songs=1
          playlist.write("[playlist]\n")
          playlist.write("Title={}\n".format(name))
          for file in os.listdir(base_path):
@@ -53,11 +78,11 @@ class PlaylistManager():
             # get the file path
             starting_path = line.split("=")
             song_path = starting_path[1][7:]#.replace("%20", " ")
-            songs_paths.append(song_path)
+            songs_paths.append(song_path.strip())
             # get the title
             i+=1
             starting_title = lines[i].split("=")
-            songs_titles.append(starting_title[1])
+            songs_titles.append(starting_title[1].strip())
             #print file_path
 
       return songs_titles, songs_paths
@@ -73,12 +98,3 @@ class PlaylistManager():
                #playlist.write("file://{}\n".format(os.path.join(base_path, file).replace(" ", "%20").replace("(", "%28").replace(")", "%29")))
 
 # .replace("", "'")
-
-
-manager = PlaylistManager()
-manager.create_pls("/home/matteo/Music", "nuova_pls")
-manager.create_m3u8("/home/matteo/Music", "nuova_pls")
-titles, paths = manager.read_playlist("nuova_pls.pls")
-
-#for i in range(len(titles)):
-   #print titles[i] + " || " + paths[i]

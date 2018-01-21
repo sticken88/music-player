@@ -2,11 +2,19 @@ import sys
 from gi.repository import GObject, GLib
 
 # to walk the filesystem
+import os
 from os import listdir, walk
 from os.path import isfile, join, expanduser
 
 # to play songs
 from backend import MusicPlayer
+
+# to manage playlist
+from playlist_creator import PlaylistManager
+
+# custom Qt Objects
+from custom_qt_objects import CustomQWidget, CustomQListWidgetItem, \
+                              CustomPlaylistQWidget
 
 # to hanlde the Qt GUI
 from PyQt4 import QtCore, QtGui, uic
@@ -15,48 +23,6 @@ from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
                          QFileDialog, QListView, QListWidgetItem, QIcon
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType('./gui/frontend.ui')
-
-# define a custom QWidget class used to model the i-th widget
-# reference: https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
-class CustomQWidget (QtGui.QWidget):
-    # string to hold the path of the song
-    media_path = ""
-
-    def __init__ (self, parent = None):
-        super(CustomQWidget, self).__init__(parent)
-        self.textQVBoxLayout = QtGui.QVBoxLayout()
-        self.textArtistQLabel    = QtGui.QLabel()
-        self.textTitleQLabel  = QtGui.QLabel()
-        self.textQVBoxLayout.addWidget(self.textArtistQLabel)
-        self.textQVBoxLayout.addWidget(self.textTitleQLabel)
-        #self.allQHBoxLayout  = QtGui.QHBoxLayout()
-        #self.iconQLabel      = QtGui.QLabel()
-        #self.allQHBoxLayout.addWidget(self.iconQLabel, 0)
-        #self.allQHBoxLayout.addLayout(self.textQVBoxLayout, 1)
-        #self.setLayout(self.allQHBoxLayout)
-        self.setLayout(self.textQVBoxLayout)
-
-    def set_artist_name(self, artist_name):
-        self.textArtistQLabel.setText(artist_name)
-
-    def set_song_title(self, song_title):
-        self.textTitleQLabel.setText(song_title)
-
-    def set_media_path(self, media_path):
-        self.media_path = media_path
-
-    def get_media_path(self):
-        return self.media_path
-
-# subclassing QListWidgetItem to hold the path of the media
-class CustomQListWidgetItem(QListWidgetItem):
-    def __init__(self, media_path, parent = None):
-        super(CustomQListWidgetItem, self).__init__(parent)
-        self.media_path = media_path
-
-    # method to get the media path
-    def get_media_path(self):
-        return self.media_path
 
 
 #class MainWindow(QMainWindow):
@@ -80,6 +46,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # instantiate the MusicPlayer object
          self.player = MusicPlayer()
 
+         #instantiate the PlaylistManager object
+         self.playlist_manager = PlaylistManager()
+
          # setting the methods to be called
          self.playButton.clicked.connect(self.playPauseAudio)
          self.stopButton.clicked.connect(self.stopAudio)
@@ -93,6 +62,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          self.songsListWidget.itemDoubleClicked.connect(self.play_song)
 
+         self.playlistListWidget.itemClicked.connect(self.parse_playlist)
+
          # set icons for the button
          self.stopButton.setIcon(QtGui.QIcon('./icons/stop.png'))
          self.playButton.setIcon(QtGui.QIcon('./icons/play.png'))
@@ -100,9 +71,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # set model in tree view
          #self.build_file_system()
 
-         # create music list
-         self.populate_song_list()
+         # create music list from file system
+         self.populate_song_list_from_fs()
 
+         # create playlists list
+         self.populate_playlist_list()
+
+         # create context menu for the song list
+         self.songsListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+         self.songsListWidget.customContextMenuRequested.connect(self.onContext)
+
+         # timer used to update the slider which shows the elapsed time of a song
          self.durationTimer = QTimer()
          self.durationTimer.timeout.connect(self.set_song_elapsed_time)
          self.durationTimer.start(1000)
@@ -110,6 +89,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # register a function that GLib will call every second
          #GLib.timeout_add_seconds(1, self.get_stream_duration)
 
+
+
+     def onContext(self, position):
+         # Create a menu
+         menu = QtGui.QMenu("Menu", self)
+         menu.addAction("Add to playlist")
+         # Show the context menu.
+         menu.exec_(self.songsListWidget.mapToGlobal(position))
+
+
+     def populate_songs_list(self):
+         # clear the current songs
+         self.songsListWidget.clear()
 
      # called when a pipeline is set to PLAYING.
      # Triggered by a signal from backend.py
@@ -136,8 +128,79 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.fileSystemView.setModel(self.fs_model)
          self.fileSystemView.setRootIndex(self.indexRoot)'''
 
+     def populate_playlist_list(self):
+         # get all the playlists
+         playlists_list = self.playlist_manager.get_playlists()
 
-     def populate_song_list(self):
+         # populate the list with the custom object
+         for playlist in playlists_list:
+            # create and populate a custom object
+            customPlaylistObject = CustomPlaylistQWidget()
+            #os.path.splitext(str(playlist))[0]
+            #get the base name wo extension
+            playlist_name = os.path.splitext(os.path.basename(playlist))[0]
+            customPlaylistObject.set_playlist_name(playlist_name)
+            customPlaylistObject.set_playlist_path(playlist)
+
+            customQListWidgetItem = CustomQListWidgetItem(customPlaylistObject.get_playlist_path())
+            # Set size hint and media path
+            customQListWidgetItem.setSizeHint(customPlaylistObject.sizeHint())
+
+            # Add QListWidgetItem into QListWidget
+            self.playlistListWidget.addItem(customQListWidgetItem)
+            self.playlistListWidget.setItemWidget(customQListWidgetItem, customPlaylistObject)
+
+            self.playlistListWidget.addItem(customQListWidgetItem)
+
+
+     def parse_playlist(self, item):
+         playlist = str(item.get_media_path())
+         print "Got {0} playlist to parse".format(playlist)
+
+         # parse the playlist
+         songs, paths = self.playlist_manager.read_pls(playlist)
+
+         # populate the songs list
+         if songs:
+             # remove the current songs
+             self.songsListWidget.clear()
+             # create the list
+             self.populate_song_list_from_playlist(songs, paths)
+         else:
+             print "No song in the playlist"
+
+
+         print "Playlist {0} has {1} songs".format(playlist, len(songs))
+         print "{0} and {1}".format(len(songs), len(paths))
+
+         #TODO: make 'populate_song_list' to handle generic lists
+
+
+     # populate the songs list from a playlist file
+     def populate_song_list_from_playlist(self, songs, paths):
+         # loop over the songs in the playlist
+         for i in range(0, len(songs)):
+             # get the i-th item
+             file_song = songs[i]
+             full_path_file = paths[i]
+
+             songCustomWidget = CustomQWidget()
+             # TODO: properly extract artist name
+             songCustomWidget.set_artist_name("Unknown")
+             songCustomWidget.set_song_title(file_song)
+             songCustomWidget.set_media_path(full_path_file)
+
+             customQListWidgetItem = CustomQListWidgetItem(songCustomWidget.get_media_path()) #QtGui.QListWidgetItem(self.songsListWidget)
+             # Set size hint and media path
+             customQListWidgetItem.setSizeHint(songCustomWidget.sizeHint())
+
+             # Add QListWidgetItem into QListWidget
+             self.songsListWidget.addItem(customQListWidgetItem)
+             self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
+
+
+
+     def populate_song_list_from_fs(self):
          # set basic variable used to visit the filesystem
          home = expanduser("~")
          music_path = join(home, "Music/")
