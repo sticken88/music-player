@@ -78,11 +78,11 @@ class PlaylistManager():
             # get the file path
             starting_path = line.split("=")
             song_path = starting_path[1][7:]#.replace("%20", " ")
-            songs_paths.append(song_path)
+            songs_paths.append(song_path.strip())
             # get the title
             i+=1
             starting_title = lines[i].split("=")
-            songs_titles.append(starting_title[1])
+            songs_titles.append(starting_title[1].strip())
             #print file_path
 
       return songs_titles, songs_paths
