@@ -90,13 +90,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          #GLib.timeout_add_seconds(1, self.get_stream_duration)
 
 
-
+     # Dinamically creates context menu according to playlist
      def onContext(self, position):
          # Create a menu
          menu = QtGui.QMenu("Menu", self)
-         menu.addAction("Add to playlist")
+         playlist_sub_menu = QtGui.QMenu("Add to playlist", self)
+         playlist_action =  QtGui.Action()
+         # TODO: try to find a way to pass a parameter to the action
+         # it will be the playlist name
+         playlist_sub_menu.addAction("caparezza", self.add_to_playlist);
+         menu.addMenu(playlist_sub_menu)
          # Show the context menu.
          menu.exec_(self.songsListWidget.mapToGlobal(position))
+
+
+     def add_to_playlist(self):
+        print "From SUB context menu"
 
 
      def populate_songs_list(self):
