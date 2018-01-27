@@ -95,17 +95,30 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # Create a menu
          menu = QtGui.QMenu("Menu", self)
          playlist_sub_menu = QtGui.QMenu("Add to playlist", self)
-         playlist_action =  QtGui.Action()
-         # TODO: try to find a way to pass a parameter to the action
-         # it will be the playlist name
-         playlist_sub_menu.addAction("caparezza", self.add_to_playlist);
+         #playlist_action =  QtGui.Action()
+
+         for pl in self.playlists_list:
+            # this will be executed for each playlist
+            new_action = playlist_sub_menu.addAction(pl)
+            receiver = lambda new_action=new_action: self.add_to_playlist(new_action)
+            self.connect(newAction, SIGNAL('triggered()'), receiver)
+            playlist_sub_menu.addAction(new_action)
+
+
          menu.addMenu(playlist_sub_menu)
          # Show the context menu.
          menu.exec_(self.songsListWidget.mapToGlobal(position))
 
 
-     def add_to_playlist(self):
-        print "From SUB context menu"
+     def add_to_playlist(self, action):
+        # get the song to be added to the playlist
+        song = self.songsListWidget.currentItem()
+        print "Current song: {0} will be added to {1}".format(song.get_media_path(), action.iconText())
+        #self.next_song = self.songsListWidget.item(self.currentSongIndex)
+        ##print "Riga {0}".format(row)
+        # value is the playlist the song must be added to
+        #print value
+        #print "From SUB context menu"
 
 
      def populate_songs_list(self):
@@ -139,10 +152,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
      def populate_playlist_list(self):
          # get all the playlists
-         playlists_list = self.playlist_manager.get_playlists()
+         self.playlists_list = self.playlist_manager.get_playlists()
 
          # populate the list with the custom object
-         for playlist in playlists_list:
+         for playlist in self.playlists_list:
             # create and populate a custom object
             customPlaylistObject = CustomPlaylistQWidget()
             #os.path.splitext(str(playlist))[0]
