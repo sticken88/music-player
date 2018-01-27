@@ -104,7 +104,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # this will be executed for each playlist
             new_action = playlist_sub_menu.addAction(pl)
             receiver = lambda new_action=new_action: self.add_to_playlist(new_action)
-            self.connect(newAction, SIGNAL('triggered()'), receiver)
+            self.connect(new_action, SIGNAL('triggered()'), receiver)
             playlist_sub_menu.addAction(new_action)
 
          # add the sbubmenu to the menu
