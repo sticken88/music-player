@@ -14,7 +14,7 @@ from playlist_creator import PlaylistManager
 
 # custom Qt Objects
 from custom_qt_objects import CustomQWidget, CustomQListWidgetItem, \
-                              CustomPlaylistQWidget
+                              CustomPlaylistQWidget, CustomQListPlaylistWidgetItem
 
 # to hanlde the Qt GUI
 from PyQt4 import QtCore, QtGui, uic
@@ -77,6 +77,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # create playlists list
          self.populate_playlist_list()
 
+         # declare a playlist dictionary that will hold all the needed data
+         self.playlists = {}
+
          # create context menu for the song list
          self.songsListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
          self.songsListWidget.customContextMenuRequested.connect(self.onContext)
@@ -104,7 +107,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.connect(newAction, SIGNAL('triggered()'), receiver)
             playlist_sub_menu.addAction(new_action)
 
-
+         # add the sbubmenu to the menu
          menu.addMenu(playlist_sub_menu)
          # Show the context menu.
          menu.exec_(self.songsListWidget.mapToGlobal(position))
@@ -131,8 +134,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          #self.player.get_song_duration()
          self.elapsedTimeSlider.setValue(self.player.get_song_elapsed())
          self.elapsedTimeSlider.setMaximum(self.player.get_song_duration())
-         print "Position: {0}".format(self.player.get_song_elapsed())
-         print "Duration: {0}".format(self.player.get_song_duration())
+         #print "Position: {0}".format(self.player.get_song_elapsed())
+         #print "Duration: {0}".format(self.player.get_song_duration())
 
 
      # Called when elapsedTimeSlider has been released
@@ -164,7 +167,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             customPlaylistObject.set_playlist_name(playlist_name)
             customPlaylistObject.set_playlist_path(playlist)
 
-            customQListWidgetItem = CustomQListWidgetItem(customPlaylistObject.get_playlist_path())
+            customQListWidgetItem = CustomQListPlaylistWidgetItem(
+                                    customPlaylistObject.get_playlist_name(),
+                                    customPlaylistObject.get_playlist_path())
             # Set size hint and media path
             customQListWidgetItem.setSizeHint(customPlaylistObject.sizeHint())
 
@@ -175,25 +180,37 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.playlistListWidget.addItem(customQListWidgetItem)
 
 
+     # Create the list of songs starting from the playlist object
      def parse_playlist(self, item):
-         playlist = str(item.get_media_path())
-         print "Got {0} playlist to parse".format(playlist)
 
-         # parse the playlist
-         songs, paths = self.playlist_manager.read_pls(playlist)
+         playlist_name = str(item.get_playlist_name())
+         playlist_path = str(item.get_playlist_path())
 
-         # populate the songs list
-         if songs:
-             # remove the current songs
-             self.songsListWidget.clear()
-             # create the list
-             self.populate_song_list_from_playlist(songs, paths)
+         #print "Got {0} playlist to parse".format(playlist_name)
+         # check if the playlist has been already parsed
+         if not (playlist_name in self.playlists):
+             # declare a dictionary to hold everything
+             self.playlists[playlist_name] = {}
+             self.playlists[playlist_name]["playlist_name"] = playlist_name
+             self.playlists[playlist_name]["playlist_path"] = playlist_path
+             # parse it
+             songs, paths = self.playlist_manager.read_pls(playlist_path)
+
+             # and save songs and songs_paths
+             self.playlists[playlist_name]["songs"] = songs
+             self.playlists[playlist_name]["paths"] = paths
+
+         # populate the list
+         if self.playlists[playlist_name]["songs"]:
+            # remove the current songs
+            self.songsListWidget.clear()
+            # create the list
+            self.populate_song_list_from_playlist(
+                      self.playlists[playlist_name]["songs"],
+                      self.playlists[playlist_name]["paths"])
          else:
-             print "No song in the playlist"
+            print "No song in the playlist"
 
-
-         print "Playlist {0} has {1} songs".format(playlist, len(songs))
-         print "{0} and {1}".format(len(songs), len(paths))
 
          #TODO: make 'populate_song_list' to handle generic lists
 
