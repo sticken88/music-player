@@ -69,12 +69,13 @@ class CustomPlaylistQWidget (QtGui.QWidget):
     def __init__ (self, parent = None):
         super(CustomPlaylistQWidget, self).__init__(parent)
         self.textQVBoxLayout = QtGui.QVBoxLayout()
-        self.playlist_name = QtGui.QLabel()
-        self.textQVBoxLayout.addWidget(self.playlist_name)
+        self.playlist_label = QtGui.QLabel()
+        self.textQVBoxLayout.addWidget(self.playlist_label)
         self.setLayout(self.textQVBoxLayout)
 
     def set_playlist_name(self, name):
-        self.playlist_name.setText(name)
+        self.playlist_label.setText(name)
+        self.playlist_name = name
 
     def set_playlist_path(self, path):
         self.playlist_path = path
