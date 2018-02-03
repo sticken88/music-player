@@ -77,9 +77,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # create playlists list
          self.populate_playlist_list()
 
-         # declare a playlist dictionary that will hold all the needed data
-         self.playlists = {}
-
          # create context menu for the song list
          self.songsListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
          self.songsListWidget.customContextMenuRequested.connect(self.onContext)
@@ -117,6 +114,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # get the song to be added to the playlist
         song = self.songsListWidget.currentItem()
         print "Current song: {0} will be added to {1}".format(song.get_media_path(), action.iconText())
+
         #self.next_song = self.songsListWidget.item(self.currentSongIndex)
         ##print "Riga {0}".format(row)
         # value is the playlist the song must be added to
@@ -155,17 +153,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
      def populate_playlist_list(self):
          # get all the playlists
-         self.playlists_list = self.playlist_manager.get_playlists()
+         self.playlists = self.playlist_manager.get_playlists()
 
-         # populate the list with the custom object
-         for playlist in self.playlists_list:
+         # populate the list# declare a playlist dictionary that will hold all the needed data with the custom object
+         for playlist in self.playlists:
+            playlist_name = playlist
+            playlist_path = self.playlists[playlist]["playlist_path"]
+
             # create and populate a custom object
             customPlaylistObject = CustomPlaylistQWidget()
             #os.path.splitext(str(playlist))[0]
             #get the base name wo extension
-            playlist_name = os.path.splitext(os.path.basename(playlist))[0]
             customPlaylistObject.set_playlist_name(playlist_name)
-            customPlaylistObject.set_playlist_path(playlist)
+            customPlaylistObject.set_playlist_path(playlist_path)
 
             customQListWidgetItem = CustomQListPlaylistWidgetItem(
                                     customPlaylistObject.get_playlist_name(),
@@ -182,8 +182,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
      # Create the list of songs starting from the playlist object
      def parse_playlist(self, item):
+         playlist_path =  item.get_playlist_path()
+         playlist_name =  item.get_playlist_name()
 
-         playlist_name = str(item.get_playlist_name())
+         # get the songs
+         songs, paths = self.playlist_manager.read_pls(playlist_path)
+
+         self.playlists[playlist_name]["songs"] = songs
+         self.playlists[playlist_name]["paths"] = paths
+
+         '''playlist_name = str(item.get_playlist_name())
          playlist_path = str(item.get_playlist_path())
 
          #print "Got {0} playlist to parse".format(playlist_name)
@@ -198,7 +206,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
              # and save songs and songs_paths
              self.playlists[playlist_name]["songs"] = songs
-             self.playlists[playlist_name]["paths"] = paths
+             self.playlists[playlist_name]["paths"] = paths'''
 
          # populate the list
          if self.playlists[playlist_name]["songs"]:
@@ -210,7 +218,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                       self.playlists[playlist_name]["paths"])
          else:
             print "No song in the playlist"
-
 
          #TODO: make 'populate_song_list' to handle generic lists
 
