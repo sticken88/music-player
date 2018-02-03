@@ -37,6 +37,21 @@ class PlaylistManager():
       return self.playlists
 
 
+   def populate_playlists(self):
+       # repeat for all the paylists
+       for playlist in self.playlists:
+           playlist_path = self.playlists[playlist]["playlist_path"]
+           # get the songs
+           songs, paths = self.read_pls(playlist_path)
+
+           self.playlists[playlist]["songs"] = songs
+           self.playlists[playlist]["paths"] = paths
+
+           print "Playlist {0} has {1} songs".format(playlist, len(self.playlists[playlist]["songs"]))
+
+       return self.playlists
+
+
    ''' Generic method which determines the correct playlist format
        and parses it accordingly
    '''
