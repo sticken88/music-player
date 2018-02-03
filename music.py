@@ -97,7 +97,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          playlist_sub_menu = QtGui.QMenu("Add to playlist", self)
          #playlist_action =  QtGui.Action()
 
-         for pl in self.playlists_list:
+         for pl in self.playlists:
             # this will be executed for each playlist
             new_action = playlist_sub_menu.addAction(pl)
             receiver = lambda new_action=new_action: self.add_to_playlist(new_action)
@@ -114,12 +114,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # get the song to be added to the playlist
         song = self.songsListWidget.currentItem()
         print "Current song: {0} will be added to {1}".format(song.get_media_path(), action.iconText())
+        # get data to add
+        song_path = song.get_media_path()
+        song_title = os.path.basename(song_path)
+        playlist_name = str(action.iconText())
+        # add to playlist
+        self.playlists[playlist_name]["songs"].append(song_title)
+        self.playlists[playlist_name]["paths"].append(song_path)
 
-        #self.next_song = self.songsListWidget.item(self.currentSongIndex)
-        ##print "Riga {0}".format(row)
-        # value is the playlist the song must be added to
-        #print value
-        #print "From SUB context menu"
+        print "Playlist {0} has {1} songs now".format(action.iconText(), len(self.playlists[playlist_name]["songs"]))
+
 
 
      def populate_songs_list(self):
