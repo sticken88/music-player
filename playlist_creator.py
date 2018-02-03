@@ -7,24 +7,49 @@ class PlaylistManager():
 
    playlist_path = join("./", "playlists/")
 
+
    def get_playlists(self):
       # create the playlists folder if missing
       if not os.path.exists(self.playlist_path):
          os.makedirs(self.playlist_path)
 
-      # declaring a list to hold the playlists
-      self.playlists_list = []
+      # declaring a dictionary to hold the playlists
+      self.playlists = {}
 
       # get the name of all the playlists
       print "Reading the name of all the playlists"
       for current_dir, subdirs, files in walk(self.playlist_path):
          # iterate on all the playlists
          for playlist in files:
-            full_path_playlist = join(current_dir, playlist)
-            self.playlists_list.append(full_path_playlist)
-         print "Found {0} playlists".format(len(files))
+            # get the name of the playlist
+            playlist_name = os.path.splitext(playlist)[0]
+            self.playlists[playlist_name] = {}
+            # and its full path
+            playlist_path = join(current_dir, playlist)
+            # create the inner data
+            self.playlists[playlist_name]["playlist_name"] = playlist_name
+            self.playlists[playlist_name]["playlist_path"] = playlist_path
+            self.playlists[playlist_name]["songs"] = []
+            self.playlists[playlist_name]["paths"] = []
 
-      return self.playlists_list
+         print "Found {0} playlists".format(len(self.playlists))
+
+      return self.playlists
+
+
+   def populate_playlists(self):
+       # repeat for all the paylists
+       for playlist in self.playlists:
+           playlist_path = self.playlists[playlist]["playlist_path"]
+           # get the songs
+           songs, paths = self.read_pls(playlist_path)
+
+           self.playlists[playlist]["songs"] = songs
+           self.playlists[playlist]["paths"] = paths
+
+           print "Playlist {0} has {1} songs".format(playlist, len(self.playlists[playlist]["songs"]))
+
+       return self.playlists
 
 
    ''' Generic method which determines the correct playlist format
