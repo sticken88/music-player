@@ -62,7 +62,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          self.songsListWidget.itemDoubleClicked.connect(self.play_song)
 
-         self.playlistListWidget.itemClicked.connect(self.parse_playlist)
+         self.playlistListWidget.itemClicked.connect(self.create_playlist_songs_list)
 
          # set icons for the button
          self.stopButton.setIcon(QtGui.QIcon('./icons/stop.png'))
@@ -85,6 +85,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.durationTimer = QTimer()
          self.durationTimer.timeout.connect(self.set_song_elapsed_time)
          self.durationTimer.start(1000)
+
+         # Single shot timer used to parse all the playlist in background
+         QTimer.singleShot(1000, self.parse_playlists_songs)
 
          # register a function that GLib will call every second
          #GLib.timeout_add_seconds(1, self.get_stream_duration)
@@ -110,10 +113,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          menu.exec_(self.songsListWidget.mapToGlobal(position))
 
 
+     def parse_playlists_songs(self):
+        print "About to parse all the playlists.."
+        self.playlists = self.playlist_manager.populate_playlists()
+        print "Updated playlists info with all the songs"
+
+
      def add_to_playlist(self, action):
         # get the song to be added to the playlist
         song = self.songsListWidget.currentItem()
         print "Current song: {0} will be added to {1}".format(song.get_media_path(), action.iconText())
+
         # get data to add
         song_path = song.get_media_path()
         song_title = os.path.basename(song_path)
@@ -123,7 +133,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.playlists[playlist_name]["paths"].append(song_path)
 
         print "Playlist {0} has {1} songs now".format(action.iconText(), len(self.playlists[playlist_name]["songs"]))
-
 
 
      def populate_songs_list(self):
@@ -185,32 +194,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
      # Create the list of songs starting from the playlist object
-     def parse_playlist(self, item):
-         playlist_path =  item.get_playlist_path()
+     def create_playlist_songs_list(self, item):
          playlist_name =  item.get_playlist_name()
-
-         # get the songs
-         songs, paths = self.playlist_manager.read_pls(playlist_path)
-
-         self.playlists[playlist_name]["songs"] = songs
-         self.playlists[playlist_name]["paths"] = paths
-
-         '''playlist_name = str(item.get_playlist_name())
-         playlist_path = str(item.get_playlist_path())
-
-         #print "Got {0} playlist to parse".format(playlist_name)
-         # check if the playlist has been already parsed
-         if not (playlist_name in self.playlists):
-             # declare a dictionary to hold everything
-             self.playlists[playlist_name] = {}
-             self.playlists[playlist_name]["playlist_name"] = playlist_name
-             self.playlists[playlist_name]["playlist_path"] = playlist_path
-             # parse it
-             songs, paths = self.playlist_manager.read_pls(playlist_path)
-
-             # and save songs and songs_paths
-             self.playlists[playlist_name]["songs"] = songs
-             self.playlists[playlist_name]["paths"] = paths'''
 
          # populate the list
          if self.playlists[playlist_name]["songs"]:
