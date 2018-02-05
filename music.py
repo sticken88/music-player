@@ -130,7 +130,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         playlist_name = str(action.iconText())
         # add to playlist
         self.playlists[playlist_name]["songs"].append(song_title)
-        self.playlists[playlist_name]["paths"].append(song_path)
+        self.playlists[playlist_name]["songs_paths"].append(song_path)
 
         print "Playlist {0} has {1} songs now".format(action.iconText(), len(self.playlists[playlist_name]["songs"]))
 
@@ -171,7 +171,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # populate the list# declare a playlist dictionary that will hold all the needed data with the custom object
          for playlist in self.playlists:
             playlist_name = playlist
-            playlist_path = self.playlists[playlist]["playlist_path"]
+            playlist_path = self.playlists[playlist]["path"]
 
             # create and populate a custom object
             customPlaylistObject = CustomPlaylistQWidget()
@@ -204,7 +204,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # create the list
             self.populate_song_list_from_playlist(
                       self.playlists[playlist_name]["songs"],
-                      self.playlists[playlist_name]["paths"])
+                      self.playlists[playlist_name]["songs_paths"])
          else:
             print "No song in the playlist"
 
@@ -305,6 +305,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
              self.player.load_audio(str(filepath))
          else:
             print "Cannot load any song.."
+
+     # Overload the closeEvent callback
+     def closeEvent(self, *args, **kwargs):
+        super(QtGui.QMainWindow, self).closeEvent(*args, **kwargs)
+        print "Exiting, saving data.."
+        # save the playlist to a file if needed
+        self.playlist_manager.save_playlists(self.playlists)
 
 
 if __name__ == '__main__':
