@@ -29,6 +29,7 @@ class PlaylistManager():
             # create the inner data
             self.playlists[playlist_name]["name"] = playlist_name
             self.playlists[playlist_name]["path"] = playlist_path
+            self.playlists[playlist_name]["modified"] = 0
             self.playlists[playlist_name]["songs"] = []
             self.playlists[playlist_name]["songs_paths"] = []
 
@@ -56,7 +57,7 @@ class PlaylistManager():
        for playlist in playlists:
            if(playlists[playlist]["modified"]):
                self.write_pls(playlists[playlist])
-               print "Saved {0}".format(playlists[playlist]["name"])
+               print "Saved '{0}''".format(playlists[playlist]["name"])
 
        print "Wrote playlists to disk."
 
@@ -81,17 +82,17 @@ class PlaylistManager():
    '''
    def write_pls(self, playlist):
 
-      with open("{}.pls".format(playlists["path"]), "w") as playlist_file:
+      with open("{}".format(playlist["path"]), "w") as playlist_file:
          # write the header
          playlist_file.write("[playlist]\n")
          playlist_file.write("Title={}\n".format(playlist["name"]))
          # loop on all the songs
-         songs = playlists["songs"]
-         paths = playlists["songs_paths"]
+         songs = playlist["songs"]
+         paths = playlist["songs_paths"]
          number_of_songs = len(songs)
          for i in range(0, number_of_songs):
-             playlist_file.write("File{}=file://{}\n".format(i+1, paths(i)))
-             playlist_file.write("Title{}={}\n".format(i+1, songs(i)))
+             playlist_file.write("File{}=file://{}\n".format(i+1, paths[i]))
+             playlist_file.write("Title{}={}\n".format(i+1, songs[i]))
 
          playlist_file.write("NumberOfEntries={}\n".format(number_of_songs))
          # write the version of the playlist, 2 is the currently valid one
