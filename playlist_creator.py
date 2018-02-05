@@ -27,10 +27,10 @@ class PlaylistManager():
             # and its full path
             playlist_path = join(current_dir, playlist)
             # create the inner data
-            self.playlists[playlist_name]["playlist_name"] = playlist_name
-            self.playlists[playlist_name]["playlist_path"] = playlist_path
+            self.playlists[playlist_name]["name"] = playlist_name
+            self.playlists[playlist_name]["path"] = playlist_path
             self.playlists[playlist_name]["songs"] = []
-            self.playlists[playlist_name]["paths"] = []
+            self.playlists[playlist_name]["songs_paths"] = []
 
          print "Found {0} playlists".format(len(self.playlists))
 
@@ -40,16 +40,25 @@ class PlaylistManager():
    def populate_playlists(self):
        # repeat for all the paylists
        for playlist in self.playlists:
-           playlist_path = self.playlists[playlist]["playlist_path"]
+           playlist_path = self.playlists[playlist]["path"]
            # get the songs
            songs, paths = self.read_pls(playlist_path)
 
            self.playlists[playlist]["songs"] = songs
-           self.playlists[playlist]["paths"] = paths
+           self.playlists[playlist]["songs_paths"] = paths
 
            print "Playlist {0} has {1} songs".format(playlist, len(self.playlists[playlist]["songs"]))
 
        return self.playlists
+
+
+   def save_playlists(self, playlists):
+       for playlist in playlists:
+           if(playlists[playlist]["modified"]):
+               self.write_pls(playlists[playlist])
+               print "Saved {0}".format(playlists[playlist]["name"])
+
+       print "Wrote playlists to disk."
 
 
    ''' Generic method which determines the correct playlist format
@@ -68,10 +77,10 @@ class PlaylistManager():
          return None, None
 
    '''
-   Create a .pls playlist file with name "name" given a path
+   Create a .pls playlist file given a playlist dictionary
    '''
-   def create_pls(self, base_path, name):
-      #base_path = "/home/matteo/Music"
+   def write_pls(self, playlist):
+      playlist_file = playlist["path"]
       with open("{}.pls".format(name), "w") as playlist:
          # variable to count the songs
          songs=1
@@ -79,7 +88,7 @@ class PlaylistManager():
          playlist.write("Title={}\n".format(name))
          for file in os.listdir(base_path):
             if file.endswith(".mp3"):
-               playlist.write("File{}=file://{}\n".format(songs, os.path.join(base_path, file))) # .replace(" ", "%20")
+               playlist.write("File{}=file://{}\n".format(songs, os.path.join(base_path, file)))
                playlist.write("Title{}={}\n".format(songs, os.path.basename(file)))
                songs+=1
 
