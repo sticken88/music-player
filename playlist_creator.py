@@ -80,21 +80,22 @@ class PlaylistManager():
    Create a .pls playlist file given a playlist dictionary
    '''
    def write_pls(self, playlist):
-      playlist_file = playlist["path"]
-      with open("{}.pls".format(name), "w") as playlist:
-         # variable to count the songs
-         songs=1
-         playlist.write("[playlist]\n")
-         playlist.write("Title={}\n".format(name))
-         for file in os.listdir(base_path):
-            if file.endswith(".mp3"):
-               playlist.write("File{}=file://{}\n".format(songs, os.path.join(base_path, file)))
-               playlist.write("Title{}={}\n".format(songs, os.path.basename(file)))
-               songs+=1
 
-         playlist.write("NumberOfEntries={}\n".format(songs-1))
-         # write the version of the playlist, 2 is currently valid one
-         playlist.write("Version=2")
+      with open("{}.pls".format(playlists["path"]), "w") as playlist_file:
+         # write the header
+         playlist_file.write("[playlist]\n")
+         playlist_file.write("Title={}\n".format(playlist["name"]))
+         # loop on all the songs
+         songs = playlists["songs"]
+         paths = playlists["songs_paths"]
+         number_of_songs = len(songs)
+         for i in range(0, number_of_songs):
+             playlist_file.write("File{}=file://{}\n".format(i+1, paths(i)))
+             playlist_file.write("Title{}={}\n".format(i+1, songs(i)))
+
+         playlist_file.write("NumberOfEntries={}\n".format(number_of_songs))
+         # write the version of the playlist, 2 is the currently valid one
+         playlist_file.write("Version=2")
 
    '''
    Read a .pls playlist file to get data used to play songs
