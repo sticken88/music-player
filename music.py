@@ -131,6 +131,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # add to playlist
         self.playlists[playlist_name]["songs"].append(song_title)
         self.playlists[playlist_name]["songs_paths"].append(song_path)
+        self.playlists[playlist_name]["modified"] = 1
 
         print "Playlist {0} has {1} songs now".format(action.iconText(), len(self.playlists[playlist_name]["songs"]))
 
