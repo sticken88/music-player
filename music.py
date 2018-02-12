@@ -97,18 +97,33 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
      def onContext(self, position):
          # Create a menu
          menu = QtGui.QMenu("Menu", self)
-         playlist_sub_menu = QtGui.QMenu("Add to playlist", self)
-         #playlist_action =  QtGui.Action()
+         add_sub_menu = QtGui.QMenu("Add to playlist", self)
 
          for pl in self.playlists:
             # this will be executed for each playlist
-            new_action = playlist_sub_menu.addAction(pl)
+            new_action = add_sub_menu.addAction(pl)
             receiver = lambda new_action=new_action: self.add_to_playlist(new_action)
             self.connect(new_action, SIGNAL('triggered()'), receiver)
-            playlist_sub_menu.addAction(new_action)
+            add_sub_menu.addAction(new_action)
 
          # add the sbubmenu to the menu
-         menu.addMenu(playlist_sub_menu)
+         menu.addMenu(add_sub_menu)
+
+         # create a sub menu iff a playlist has been selected
+         if self.playlistListWidget.currentItem():
+             # get the object and the name of the playlist
+             current = self.playlistListWidget.currentItem()
+             playlist = current.get_playlist_name()
+             # create the submenu
+             remove_sub_menu = QtGui.QMenu("Remove from", self)
+             # and the only action
+             remove_action = remove_sub_menu.addAction(playlist)
+             receiver = lambda remove_action=remove_action: self.remove_from_playlist(remove_action)
+             self.connect(remove_action, SIGNAL('triggered()'), receiver)
+             remove_sub_menu.addAction(remove_action)
+             # add to main menu
+             menu.addMenu(remove_sub_menu)
+
          # Show the context menu.
          menu.exec_(self.songsListWidget.mapToGlobal(position))
 
@@ -134,6 +149,27 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.playlists[playlist_name]["modified"] = 1
 
         print "Playlist {0} has {1} songs now".format(action.iconText(), len(self.playlists[playlist_name]["songs"]))
+
+
+     def remove_from_playlist(self, action):
+         song = self.songsListWidget.currentItem()
+         print "Current song: {0} will removed from {1}".format(song.get_media_path(), action.iconText())
+
+         # get data to remove
+         song_path = song.get_media_path()
+         song_title = os.path.basename(song_path)
+         playlist_name = str(action.iconText())
+         # add to playlist
+         self.playlists[playlist_name]["songs"].remove(song_title)
+         self.playlists[playlist_name]["songs_paths"].remove(song_path)
+         self.playlists[playlist_name]["modified"] = 1
+
+         #self.songsListWidget.removeItemWidget(song)
+         to_be_removed = self.songsListWidget.takeItem(self.songsListWidget.row(song))
+         # not managed by pyqt anymore, manually deleted
+         del to_be_removed
+         #self.listWidget.takeItem(self.listWidget.row(item))
+         print "Playlist {0} has {1} songs now".format(action.iconText(), len(self.playlists[playlist_name]["songs"]))
 
 
      def populate_songs_list(self):
