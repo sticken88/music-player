@@ -20,7 +20,8 @@ from custom_qt_objects import CustomQWidget, CustomQListWidgetItem, \
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import SIGNAL, SLOT, QTimer
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
-                         QFileDialog, QListView, QListWidgetItem, QIcon
+                         QFileDialog, QListView, QListWidgetItem, QIcon, \
+                         QInputDialog
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType('./gui/frontend.ui')
 
@@ -91,6 +92,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          # register a function that GLib will call every second
          #GLib.timeout_add_seconds(1, self.get_stream_duration)
+         self.addPlaylistButton.clicked.connect(self.add_new_playlist)
 
 
      # Dinamically creates context menu according to playlist
@@ -172,9 +174,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          print "Playlist {0} has {1} songs now".format(action.iconText(), len(self.playlists[playlist_name]["songs"]))
 
 
-     def populate_songs_list(self):
-         # clear the current songs
-         self.songsListWidget.clear()
+     # Triggered when "Add Playlist button is pressed"
+     def add_new_playlist(self):
+         # get the name
+         playlist_name, res = QtGui.QInputDialog.getText(self, "Add new playlist",
+                "Playlist name:", QtGui.QLineEdit.Normal,
+                "")
+
+         # Add it to the playlist data structure
+         if playlist_name:
+             self.playlist_manager.create_playlist(str(playlist_name))
+         else:
+             print "No name inserted for the new playlist"
+
+
 
      # called when a pipeline is set to PLAYING.
      # Triggered by a signal from backend.py
@@ -269,7 +282,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
              # Add QListWidgetItem into QListWidget
              self.songsListWidget.addItem(customQListWidgetItem)
              self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
-
 
 
      def populate_song_list_from_fs(self):
