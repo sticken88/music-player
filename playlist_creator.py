@@ -5,37 +5,48 @@ from os.path import join
 
 class PlaylistManager():
 
-   playlist_path = join("./", "playlists/")
+   playlist_dir = join("./", "playlists/")
 
 
    def get_playlists(self):
       # create the playlists folder if missing
-      if not os.path.exists(self.playlist_path):
-         os.makedirs(self.playlist_path)
+      if not os.path.exists(self.playlist_dir):
+         os.makedirs(self.playlist_dir)
 
       # declaring a dictionary to hold the playlists
       self.playlists = {}
 
       # get the name of all the playlists
       print "Reading the name of all the playlists"
-      for current_dir, subdirs, files in walk(self.playlist_path):
+      for current_dir, subdirs, files in walk(self.playlist_dir):
          # iterate on all the playlists
          for playlist in files:
             # get the name of the playlist
             playlist_name = os.path.splitext(playlist)[0]
-            self.playlists[playlist_name] = {}
             # and its full path
             playlist_path = join(current_dir, playlist)
-            # create the inner data
-            self.playlists[playlist_name]["name"] = playlist_name
-            self.playlists[playlist_name]["path"] = playlist_path
-            self.playlists[playlist_name]["modified"] = 0
-            self.playlists[playlist_name]["songs"] = []
-            self.playlists[playlist_name]["songs_paths"] = []
+            self.create_playlist_entry(playlist_name, playlist_path)
 
          print "Found {0} playlists".format(len(self.playlists))
 
       return self.playlists
+
+
+   def create_playlist(self, playlist_name):
+       playlist_path = join(self.playlist_dir, playlist_name + ".pls")
+       self.create_playlist_entry(playlist_name, playlist_path)
+       print "Created playlist {0}, saved in {1}".format(playlist_name, playlist_path)
+       print "Now there are {0} playlists".format(len(self.playlists))
+
+
+   def create_playlist_entry(self, playlist_name, playlist_path):
+       # create the inner data
+       self.playlists[playlist_name] = {}
+       self.playlists[playlist_name]["name"] = playlist_name
+       self.playlists[playlist_name]["path"] = playlist_path
+       self.playlists[playlist_name]["modified"] = 0
+       self.playlists[playlist_name]["songs"] = []
+       self.playlists[playlist_name]["songs_paths"] = []
 
 
    def populate_playlists(self):
