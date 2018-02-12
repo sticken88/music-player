@@ -98,6 +98,19 @@
     </rect>
    </property>
   </widget>
+  <widget class="QPushButton" name="addPlaylistButton">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>360</y>
+     <width>88</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add Playlist</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
