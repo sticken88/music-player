@@ -5,29 +5,32 @@ from os.path import join
 
 class PlaylistManager():
 
+   # basic path
    playlist_dir = join("./", "playlists/")
-
+   # declaring a dictionary to hold the playlists
+   playlists = {}
 
    def get_playlists(self):
-      # create the playlists folder if missing
-      if not os.path.exists(self.playlist_dir):
-         os.makedirs(self.playlist_dir)
+      # check if the data is empty or not
+      if len(self.playlists):
+          return self.playlists
+      else:
+          # create the playlists folder if missing
+          if not os.path.exists(self.playlist_dir):
+              os.makedirs(self.playlist_dir)
 
-      # declaring a dictionary to hold the playlists
-      self.playlists = {}
+          # get the name of all the playlists
+          print "Reading the name of all the playlists"
+          for current_dir, subdirs, files in walk(self.playlist_dir):
+             # iterate on all the playlists
+             for playlist in files:
+                 # get the name of the playlist
+                 playlist_name = os.path.splitext(playlist)[0]
+                 # and its full path
+                 playlist_path = join(current_dir, playlist)
+                 self.create_playlist_entry(playlist_name, playlist_path)
 
-      # get the name of all the playlists
-      print "Reading the name of all the playlists"
-      for current_dir, subdirs, files in walk(self.playlist_dir):
-         # iterate on all the playlists
-         for playlist in files:
-            # get the name of the playlist
-            playlist_name = os.path.splitext(playlist)[0]
-            # and its full path
-            playlist_path = join(current_dir, playlist)
-            self.create_playlist_entry(playlist_name, playlist_path)
-
-         print "Found {0} playlists".format(len(self.playlists))
+             print "Found {0} playlists".format(len(self.playlists))
 
       return self.playlists
 
