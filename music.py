@@ -178,12 +178,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
      def add_new_playlist(self):
          # get the name
          playlist_name, res = QtGui.QInputDialog.getText(self, "Add new playlist",
-                "Playlist name:", QtGui.QLineEdit.Normal,
-                "")
+                "Playlist name:", QtGui.QLineEdit.Normal,"")
 
          # Add it to the playlist data structure
          if playlist_name:
              self.playlist_manager.create_playlist(str(playlist_name))
+             # clear the playlists list
+             self.playlistListWidget.clear()
+             # create again the playlists list
+             self.populate_playlist_list()
          else:
              print "No name inserted for the new playlist"
 
