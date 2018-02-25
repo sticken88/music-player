@@ -38,6 +38,8 @@ class PlaylistManager():
    def create_playlist(self, playlist_name):
        playlist_path = join(self.playlist_dir, playlist_name + ".pls")
        self.create_playlist_entry(playlist_name, playlist_path)
+       # write an empty playlist structure
+       self.write_pls(self.playlists[playlist_name])
        print "Created playlist {0}, saved in {1}".format(playlist_name, playlist_path)
        print "Now there are {0} playlists".format(len(self.playlists))
 
