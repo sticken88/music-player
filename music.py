@@ -21,7 +21,7 @@ from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import SIGNAL, SLOT, QTimer
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
                          QFileDialog, QListView, QListWidgetItem, QIcon, \
-                         QInputDialog
+                         QInputDialog, QAction
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType('./gui/frontend.ui')
 
@@ -78,9 +78,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # create playlists list
          self.populate_playlist_list()
 
-         # create context menu for the song list
+         # create context menus: song list..
          self.songsListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-         self.songsListWidget.customContextMenuRequested.connect(self.onContext)
+         self.songsListWidget.customContextMenuRequested.connect(self.onSongContext)
+         # ..and playlists list
+         self.playlistListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+         self.playlistListWidget.customContextMenuRequested.connect(self.onPlaylistContext)
 
          # timer used to update the slider which shows the elapsed time of a song
          self.durationTimer = QTimer()
@@ -96,9 +99,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
      # Dinamically creates context menu according to playlist
-     def onContext(self, position):
+     def onSongContext(self, position):
          # Create a menu
-         menu = QtGui.QMenu("Menu", self)
+         menu = QtGui.QMenu("Songs menu", self)
          add_sub_menu = QtGui.QMenu("Add to playlist", self)
 
          for pl in self.playlists:
@@ -128,6 +131,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          # Show the context menu.
          menu.exec_(self.songsListWidget.mapToGlobal(position))
+
+
+     def onPlaylistContext(self, position):
+         # Create a context menu
+         menu = QtGui.QMenu("Playlists menu")
+         # create an action
+         delete = menu.addAction("Delete")
+         delete.triggered.connect(self.remove_playlist)
+         menu.addAction(delete)
+
+         # Show the context menu.
+         menu.exec_(self.playlistListWidget.mapToGlobal(position))
+
+
+     def remove_playlist(self, position):
+         print "Remove playlist action"
 
 
      def parse_playlists_songs(self):
