@@ -20,7 +20,8 @@ from custom_qt_objects import CustomQWidget, CustomQListWidgetItem, \
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import SIGNAL, SLOT, QTimer
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
-                         QFileDialog, QListView, QListWidgetItem, QIcon
+                         QFileDialog, QListView, QListWidgetItem, QIcon, \
+                         QInputDialog, QAction
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType('./gui/frontend.ui')
 
@@ -77,9 +78,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # create playlists list
          self.populate_playlist_list()
 
-         # create context menu for the song list
+         # create context menus: song list..
          self.songsListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-         self.songsListWidget.customContextMenuRequested.connect(self.onContext)
+         self.songsListWidget.customContextMenuRequested.connect(self.onSongContext)
+         # ..and playlists list
+         self.playlistListWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+         self.playlistListWidget.customContextMenuRequested.connect(self.onPlaylistContext)
 
          # timer used to update the slider which shows the elapsed time of a song
          self.durationTimer = QTimer()
@@ -91,26 +95,64 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          # register a function that GLib will call every second
          #GLib.timeout_add_seconds(1, self.get_stream_duration)
+         self.addPlaylistButton.clicked.connect(self.add_new_playlist)
 
 
      # Dinamically creates context menu according to playlist
-     def onContext(self, position):
+     def onSongContext(self, position):
          # Create a menu
-         menu = QtGui.QMenu("Menu", self)
-         playlist_sub_menu = QtGui.QMenu("Add to playlist", self)
-         #playlist_action =  QtGui.Action()
+         menu = QtGui.QMenu("Songs menu", self)
+         add_sub_menu = QtGui.QMenu("Add to playlist", self)
 
          for pl in self.playlists:
             # this will be executed for each playlist
-            new_action = playlist_sub_menu.addAction(pl)
+            new_action = add_sub_menu.addAction(pl)
             receiver = lambda new_action=new_action: self.add_to_playlist(new_action)
             self.connect(new_action, SIGNAL('triggered()'), receiver)
-            playlist_sub_menu.addAction(new_action)
+            add_sub_menu.addAction(new_action)
 
          # add the sbubmenu to the menu
-         menu.addMenu(playlist_sub_menu)
+         menu.addMenu(add_sub_menu)
+
+         # create a sub menu iff a playlist has been selected
+         if self.playlistListWidget.currentItem():
+             # get the object and the name of the playlist
+             current = self.playlistListWidget.currentItem()
+             playlist = current.get_playlist_name()
+             # create the submenu
+             remove_sub_menu = QtGui.QMenu("Remove from", self)
+             # and the only action
+             remove_action = remove_sub_menu.addAction(playlist)
+             receiver = lambda remove_action=remove_action: self.remove_from_playlist(remove_action)
+             self.connect(remove_action, SIGNAL('triggered()'), receiver)
+             remove_sub_menu.addAction(remove_action)
+             # add to main menu
+             menu.addMenu(remove_sub_menu)
+
          # Show the context menu.
          menu.exec_(self.songsListWidget.mapToGlobal(position))
+
+
+     def onPlaylistContext(self, position):
+         # Create a context menu
+         menu = QtGui.QMenu("Playlists menu")
+         # create an action
+         delete = menu.addAction("Delete")
+         delete.triggered.connect(self.remove_playlist)
+         menu.addAction(delete)
+
+         # Show the context menu.
+         menu.exec_(self.playlistListWidget.mapToGlobal(position))
+
+
+     def remove_playlist(self, position):
+         # get the current playlist to be removed
+         playlist = self.playlistListWidget.currentItem().get_playlist_name()
+         # delete playlist
+         self.playlist_manager.delete_playlist(playlist)
+         self.refresh_playlists_list()
+         # refresh the list
+         print "Playlist {0} has been deleted.".format(playlist)
 
 
      def parse_playlists_songs(self):
@@ -130,14 +172,54 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         playlist_name = str(action.iconText())
         # add to playlist
         self.playlists[playlist_name]["songs"].append(song_title)
-        self.playlists[playlist_name]["paths"].append(song_path)
+        self.playlists[playlist_name]["songs_paths"].append(song_path)
+        self.playlists[playlist_name]["modified"] = 1
 
         print "Playlist {0} has {1} songs now".format(action.iconText(), len(self.playlists[playlist_name]["songs"]))
 
 
-     def populate_songs_list(self):
-         # clear the current songs
-         self.songsListWidget.clear()
+     def refresh_playlists_list(self):
+         # clear the playlists list
+         self.playlistListWidget.clear()
+         # create again the playlists list
+         self.populate_playlist_list()
+
+
+     def remove_from_playlist(self, action):
+         song = self.songsListWidget.currentItem()
+         print "Current song: {0} will removed from {1}".format(song.get_media_path(), action.iconText())
+
+         # get data to remove
+         song_path = song.get_media_path()
+         song_title = os.path.basename(song_path)
+         playlist_name = str(action.iconText())
+         # add to playlist
+         self.playlists[playlist_name]["songs"].remove(song_title)
+         self.playlists[playlist_name]["songs_paths"].remove(song_path)
+         self.playlists[playlist_name]["modified"] = 1
+
+         #self.songsListWidget.removeItemWidget(song)
+         to_be_removed = self.songsListWidget.takeItem(self.songsListWidget.row(song))
+         # not managed by pyqt anymore, manually deleted
+         del to_be_removed
+         #self.listWidget.takeItem(self.listWidget.row(item))
+         print "Playlist {0} has {1} songs now".format(action.iconText(), len(self.playlists[playlist_name]["songs"]))
+
+
+     # Triggered when "Add Playlist button is pressed"
+     def add_new_playlist(self):
+         # get the name
+         playlist_name, res = QtGui.QInputDialog.getText(self, "Add new playlist",
+                "Playlist name:", QtGui.QLineEdit.Normal,"")
+
+         # Add it to the playlist data structure
+         if playlist_name:
+             self.playlist_manager.create_playlist(str(playlist_name))
+             # refresh the playlists lists
+             self.refresh_playlists_list()
+         else:
+             print "No name inserted for the new playlist"
+
 
      # called when a pipeline is set to PLAYING.
      # Triggered by a signal from backend.py
@@ -171,7 +253,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # populate the list# declare a playlist dictionary that will hold all the needed data with the custom object
          for playlist in self.playlists:
             playlist_name = playlist
-            playlist_path = self.playlists[playlist]["playlist_path"]
+            playlist_path = self.playlists[playlist]["path"]
 
             # create and populate a custom object
             customPlaylistObject = CustomPlaylistQWidget()
@@ -204,7 +286,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             # create the list
             self.populate_song_list_from_playlist(
                       self.playlists[playlist_name]["songs"],
-                      self.playlists[playlist_name]["paths"])
+                      self.playlists[playlist_name]["songs_paths"])
          else:
             print "No song in the playlist"
 
@@ -232,7 +314,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
              # Add QListWidgetItem into QListWidget
              self.songsListWidget.addItem(customQListWidgetItem)
              self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
-
 
 
      def populate_song_list_from_fs(self):
@@ -305,6 +386,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
              self.player.load_audio(str(filepath))
          else:
             print "Cannot load any song.."
+
+     # Overload the closeEvent callback
+     def closeEvent(self, *args, **kwargs):
+        super(QtGui.QMainWindow, self).closeEvent(*args, **kwargs)
+        print "Exiting, saving data.."
+        # save the playlist to a file if needed
+        self.playlist_manager.save_playlists(self.playlists)
 
 
 if __name__ == '__main__':

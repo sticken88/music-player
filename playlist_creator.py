@@ -5,51 +5,94 @@ from os.path import join
 
 class PlaylistManager():
 
-   playlist_path = join("./", "playlists/")
-
+   # basic path
+   playlist_dir = join("./", "playlists/")
+   # declaring a dictionary to hold the playlists
+   playlists = {}
 
    def get_playlists(self):
-      # create the playlists folder if missing
-      if not os.path.exists(self.playlist_path):
-         os.makedirs(self.playlist_path)
+      # check if the data is empty or not
+      if len(self.playlists):
+          return self.playlists
+      else:
+          # create the playlists folder if missing
+          if not os.path.exists(self.playlist_dir):
+              os.makedirs(self.playlist_dir)
 
-      # declaring a dictionary to hold the playlists
-      self.playlists = {}
+          # get the name of all the playlists
+          print "Reading the name of all the playlists"
+          for current_dir, subdirs, files in walk(self.playlist_dir):
+             # iterate on all the playlists
+             for playlist in files:
+                 # get the name of the playlist
+                 playlist_name = os.path.splitext(playlist)[0]
+                 # and its full path
+                 playlist_path = join(current_dir, playlist)
+                 self.create_playlist_entry(playlist_name, playlist_path)
 
-      # get the name of all the playlists
-      print "Reading the name of all the playlists"
-      for current_dir, subdirs, files in walk(self.playlist_path):
-         # iterate on all the playlists
-         for playlist in files:
-            # get the name of the playlist
-            playlist_name = os.path.splitext(playlist)[0]
-            self.playlists[playlist_name] = {}
-            # and its full path
-            playlist_path = join(current_dir, playlist)
-            # create the inner data
-            self.playlists[playlist_name]["playlist_name"] = playlist_name
-            self.playlists[playlist_name]["playlist_path"] = playlist_path
-            self.playlists[playlist_name]["songs"] = []
-            self.playlists[playlist_name]["paths"] = []
-
-         print "Found {0} playlists".format(len(self.playlists))
+             print "Found {0} playlists".format(len(self.playlists))
 
       return self.playlists
+
+
+   def create_playlist(self, playlist_name):
+       playlist_path = join(self.playlist_dir, playlist_name + ".pls")
+       self.create_playlist_entry(playlist_name, playlist_path)
+       # write an empty playlist structure
+       self.write_pls(self.playlists[playlist_name])
+       print "Created playlist {0}, saved in {1}".format(playlist_name, playlist_path)
+       print "Now there are {0} playlists".format(len(self.playlists))
+
+
+   def create_playlist_entry(self, playlist_name, playlist_path):
+       # create the inner data
+       self.playlists[playlist_name] = {}
+       self.playlists[playlist_name]["name"] = playlist_name
+       self.playlists[playlist_name]["path"] = playlist_path
+       self.playlists[playlist_name]["modified"] = 0
+       self.playlists[playlist_name]["songs"] = []
+       self.playlists[playlist_name]["songs_paths"] = []
+
+
+   def delete_playlist(self, playlist):
+       """Delete a playlist.
+       Removes a playlist from the dictionary and
+       deletes the corresponding file on disk.
+       """
+       # remove the file
+       os.remove(self.playlists[playlist]["path"])
+       # delete the object from the dictionary
+       del self.playlists[playlist]["name"]
+       del self.playlists[playlist]["path"]
+       del self.playlists[playlist]["modified"]
+       # delete the lists
+       del self.playlists[playlist]["songs"][:]
+       del self.playlists[playlist]["songs_paths"][:]
+       del self.playlists[playlist]
 
 
    def populate_playlists(self):
        # repeat for all the paylists
        for playlist in self.playlists:
-           playlist_path = self.playlists[playlist]["playlist_path"]
+           playlist_path = self.playlists[playlist]["path"]
            # get the songs
            songs, paths = self.read_pls(playlist_path)
 
            self.playlists[playlist]["songs"] = songs
-           self.playlists[playlist]["paths"] = paths
+           self.playlists[playlist]["songs_paths"] = paths
 
            print "Playlist {0} has {1} songs".format(playlist, len(self.playlists[playlist]["songs"]))
 
        return self.playlists
+
+
+   def save_playlists(self, playlists):
+       for playlist in playlists:
+           if(playlists[playlist]["modified"]):
+               self.write_pls(playlists[playlist])
+               print "Saved '{0}''".format(playlists[playlist]["name"])
+
+       print "Wrote playlists to disk."
 
 
    ''' Generic method which determines the correct playlist format
@@ -68,24 +111,25 @@ class PlaylistManager():
          return None, None
 
    '''
-   Create a .pls playlist file with name "name" given a path
+   Create a .pls playlist file given a playlist dictionary
    '''
-   def create_pls(self, base_path, name):
-      #base_path = "/home/matteo/Music"
-      with open("{}.pls".format(name), "w") as playlist:
-         # variable to count the songs
-         songs=1
-         playlist.write("[playlist]\n")
-         playlist.write("Title={}\n".format(name))
-         for file in os.listdir(base_path):
-            if file.endswith(".mp3"):
-               playlist.write("File{}=file://{}\n".format(songs, os.path.join(base_path, file))) # .replace(" ", "%20")
-               playlist.write("Title{}={}\n".format(songs, os.path.basename(file)))
-               songs+=1
+   def write_pls(self, playlist):
 
-         playlist.write("NumberOfEntries={}\n".format(songs-1))
-         # write the version of the playlist, 2 is currently valid one
-         playlist.write("Version=2")
+      with open("{}".format(playlist["path"]), "w") as playlist_file:
+         # write the header
+         playlist_file.write("[playlist]\n")
+         playlist_file.write("Title={}\n".format(playlist["name"]))
+         # loop on all the songs
+         songs = playlist["songs"]
+         paths = playlist["songs_paths"]
+         number_of_songs = len(songs)
+         for i in range(0, number_of_songs):
+             playlist_file.write("File{}=file://{}\n".format(i+1, paths[i]))
+             playlist_file.write("Title{}={}\n".format(i+1, songs[i]))
+
+         playlist_file.write("NumberOfEntries={}\n".format(number_of_songs))
+         # write the version of the playlist, 2 is the currently valid one
+         playlist_file.write("Version=2")
 
    '''
    Read a .pls playlist file to get data used to play songs
