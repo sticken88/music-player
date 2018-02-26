@@ -146,7 +146,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
      def remove_playlist(self, position):
-         print "Remove playlist action"
+         # get the current playlist to be removed
+         playlist = self.playlistListWidget.currentItem().get_playlist_name()
+         # delete playlist
+         self.playlist_manager.delete_playlist(playlist)
+         self.refresh_playlists_list()
+         # refresh the list
+         print "Playlist {0} has been deleted.".format(playlist)
 
 
      def parse_playlists_songs(self):
@@ -170,6 +176,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.playlists[playlist_name]["modified"] = 1
 
         print "Playlist {0} has {1} songs now".format(action.iconText(), len(self.playlists[playlist_name]["songs"]))
+
+
+     def refresh_playlists_list(self):
+         # clear the playlists list
+         self.playlistListWidget.clear()
+         # create again the playlists list
+         self.populate_playlist_list()
 
 
      def remove_from_playlist(self, action):
@@ -202,13 +215,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # Add it to the playlist data structure
          if playlist_name:
              self.playlist_manager.create_playlist(str(playlist_name))
-             # clear the playlists list
-             self.playlistListWidget.clear()
-             # create again the playlists list
-             self.populate_playlist_list()
+             # refresh the playlists lists
+             self.refresh_playlists_list()
          else:
              print "No name inserted for the new playlist"
-
 
 
      # called when a pipeline is set to PLAYING.

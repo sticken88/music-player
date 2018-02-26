@@ -54,6 +54,23 @@ class PlaylistManager():
        self.playlists[playlist_name]["songs_paths"] = []
 
 
+   def delete_playlist(self, playlist):
+       """Delete a playlist.
+       Removes a playlist from the dictionary and
+       deletes the corresponding file on disk.
+       """
+       # remove the file
+       os.remove(self.playlists[playlist]["path"])
+       # delete the object from the dictionary
+       del self.playlists[playlist]["name"]
+       del self.playlists[playlist]["path"]
+       del self.playlists[playlist]["modified"]
+       # delete the lists
+       del self.playlists[playlist]["songs"][:]
+       del self.playlists[playlist]["songs_paths"][:]
+       del self.playlists[playlist]
+
+
    def populate_playlists(self):
        # repeat for all the paylists
        for playlist in self.playlists:
