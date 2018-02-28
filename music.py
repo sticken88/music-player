@@ -136,10 +136,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
      def onPlaylistContext(self, position):
          # Create a context menu
          menu = QtGui.QMenu("Playlists menu")
-         # create an action
+         # create an action used to delete a playlist
          delete = menu.addAction("Delete")
          delete.triggered.connect(self.remove_playlist)
          menu.addAction(delete)
+
+         # create an action used to rename a playlist
+         rename = menu.addAction("Rename")
+         rename.triggered.connect(self.rename_playlist)
+         menu.addAction(rename)
 
          # Show the context menu.
          menu.exec_(self.playlistListWidget.mapToGlobal(position))
@@ -153,6 +158,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          self.refresh_playlists_list()
          # refresh the list
          print "Playlist {0} has been deleted.".format(playlist)
+
+
+     def rename_playlist(self, position):
+         # first off, popup a new window
+         new_name, res = QtGui.QInputDialog.getText(self, "Add new playlist",
+                "Playlist name:", QtGui.QLineEdit.Normal,"")
+
+         # if a new name has been typed
+         if new_name:
+             # get the current playlist to be removed
+             playlist = self.playlistListWidget.currentItem().get_playlist_name()
+             # delete playlist
+             self.playlist_manager.rename_playlist(playlist, str(new_name))
+             self.refresh_playlists_list()
+             # refresh the list
+             print "Playlist {0} has been renamed to {1}.".format(playlist, new_name)
 
 
      def parse_playlists_songs(self):
