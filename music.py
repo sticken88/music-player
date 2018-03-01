@@ -21,7 +21,7 @@ from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import SIGNAL, SLOT, QTimer
 from PyQt4.QtGui import QApplication, QMainWindow, QPushButton, \
                          QFileDialog, QListView, QListWidgetItem, QIcon, \
-                         QInputDialog, QAction
+                         QInputDialog, QAction, QMessageBox
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType('./gui/frontend.ui')
 
@@ -138,7 +138,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          menu = QtGui.QMenu("Playlists menu")
          # create an action used to delete a playlist
          delete = menu.addAction("Delete")
-         delete.triggered.connect(self.remove_playlist)
+         delete.triggered.connect(self.ask_confirmation)
          menu.addAction(delete)
 
          # create an action used to rename a playlist
@@ -150,7 +150,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          menu.exec_(self.playlistListWidget.mapToGlobal(position))
 
 
-     def remove_playlist(self, position):
+     def ask_confirmation(self, position):
+         """Prompt a confirmation message.
+         Avoids accidentally deletion of playlists.
+         """
+
+         ret = QMessageBox.warning(self, self.tr("Delete confirmation"),
+                               self.tr("Are sure to delete the selected playlist?"),
+                               QMessageBox.Ok | QMessageBox.Cancel)
+
+         if ret == QMessageBox.Ok:
+             self.remove_playlist()
+
+
+     def remove_playlist(self):
          # get the current playlist to be removed
          playlist = self.playlistListWidget.currentItem().get_playlist_name()
          # delete playlist
