@@ -84,6 +84,16 @@ class PlaylistManager():
        new_playlist_path = join(self.playlist_dir, new_name+".pls")
        os.rename(self.playlists[playlist]["path"], new_playlist_path)
 
+       # Rename the name of the playlist inside the .pls file
+       with open(new_playlist_path, "r") as pls_file:
+           lines = pls_file.readlines()
+
+       lines[1] = "Title=" + new_name + "\n"
+
+       # write back the file
+       with open(new_playlist_path, "w") as pls_file:
+           pls_file.writelines(lines)
+
        # create a new entry in the dictionary
        self.create_playlist_entry(new_name, new_playlist_path)
        # cannot copy the old one to the new because it copies the pointer
