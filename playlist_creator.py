@@ -54,6 +54,16 @@ class PlaylistManager():
        self.playlists[playlist_name]["songs_paths"] = []
 
 
+   def delete_playlist_entry(self, playlist):
+       del self.playlists[playlist]["name"]
+       del self.playlists[playlist]["path"]
+       del self.playlists[playlist]["modified"]
+       # delete the lists
+       del self.playlists[playlist]["songs"][:]
+       del self.playlists[playlist]["songs_paths"][:]
+       del self.playlists[playlist]
+
+
    def delete_playlist(self, playlist):
        """Delete a playlist.
        Removes a playlist from the dictionary and
@@ -62,13 +72,35 @@ class PlaylistManager():
        # remove the file
        os.remove(self.playlists[playlist]["path"])
        # delete the object from the dictionary
-       del self.playlists[playlist]["name"]
-       del self.playlists[playlist]["path"]
-       del self.playlists[playlist]["modified"]
-       # delete the lists
-       del self.playlists[playlist]["songs"][:]
-       del self.playlists[playlist]["songs_paths"][:]
-       del self.playlists[playlist]
+       self.delete_playlist_entry(playlist)
+
+
+   def rename_playlist(self, playlist, new_name):
+       """Rename a playlist.
+       Receives the playlist that must be renamed
+       and the new name.
+       """
+       # rename the old file to the new one
+       new_playlist_path = join(self.playlist_dir, new_name+".pls")
+       os.rename(self.playlists[playlist]["path"], new_playlist_path)
+
+       # Rename the name of the playlist inside the .pls file
+       with open(new_playlist_path, "r") as pls_file:
+           lines = pls_file.readlines()
+
+       lines[1] = "Title=" + new_name + "\n"
+
+       # write back the file
+       with open(new_playlist_path, "w") as pls_file:
+           pls_file.writelines(lines)
+
+       # create a new entry in the dictionary
+       self.create_playlist_entry(new_name, new_playlist_path)
+       # cannot copy the old one to the new because it copies the pointer
+       self.playlists[new_name]["songs"] = list(self.playlists[playlist]["songs"])
+       self.playlists[new_name]["songs_paths"] = list(self.playlists[playlist]["songs_paths"])
+       # and finally deletes the old entry
+       self.delete_playlist_entry(playlist)
 
 
    def populate_playlists(self):
