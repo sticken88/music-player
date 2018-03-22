@@ -1,44 +1,54 @@
-import pygst
-pygst.require('0.10')
-import gst
+import gi
+gi.require_version('Gst', '1.0')
+gi.require_version('GstBase', '1.0')
+from PyQt4.QtCore import QObject
+
 import json
 
-class RadioPlayer(object):
+class RadioPlayer(QObject):
 	"""docstring for RadioPlayer"""
 	def __init__(self):
-		self.pipeline = gst.Pipeline("RadioPipe")
-		self.player = gst.element_factory_make("playbin2", "player")
+		QObject.__init__(self)
+		Gst.init(None) # maybe it's not needed since it's already called
 
-        # json configuration file which holds the radio stations url
-		self.radio_stations_file = 'radio_stations.json'
+		self.radio = Gst.ElementFactory.make("playbin", "player")
 
-		if (not self.pipeline or not self.player):
+		if not self.radio:
 			print 'Not all elements could be created. Cannot create a Gstreamer pipeline to stream radio...'
 			exit(-1)
 
-		self.pipeline.add(self.player)
-		print "Created GStreamer pipleine..."
+        # set the initial default value to 0.5
+        self.radio.set_property('volume', 0.5)
+		print "Created GStreamer pipleine to stream radio..."
 
-		bus = self.pipeline.get_bus()
-		bus.add_signal_watch()
-		bus.connect("message", self.on_message)
+        bus = self.radio.get_bus()
+        #bus.enable_sync_message_emission()
+        bus.add_signal_watch()
+        # message::tag should give us only the tags
+        bus.connect("message", self.on_message)
+
+        load_radio_stations()
+
+
+	def play_station(self, radio):
+		self.radio.set_property('uri', self.radio_stations[radio])
+		self.radio.set_state(Gst.State.PLAYING)
+
+
+	def load_radio_stations():
+		# json configuration file which holds the radio stations url
+		self.radio_stations_file = 'radio_stations.json'
 
 		#load radio stations
 		with open(self.radio_stations_file) as file_stations:
-			self.stations = json.load(file_stations)
+		    self.stations = json.load(file_stations)
 
 		print "Loaded radio stations file..."
 		self.radio_stations = self.stations['radio_stations']
 
 
-	def play_station(self, radio):
-		self.player.set_property('uri', self.radio_stations[radio])
-		self.pipeline.set_state(gst.STATE_PLAYING)
-		# getting the bus
-
 	def on_message(self, bus, message):
-		if message.type == gst.MessageType.EOS:
-			print message
-		elif message.type == gst.MessageType.ERROR:
-			error_msg = message.parse_error()
-			print error_msg
+		#print message.type
+		if message.type == Gst.MessageType.ERROR:
+		   error_msg = message.parse_error()
+		   print error_msg
