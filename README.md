@@ -2,7 +2,7 @@
 Music player and radio streamer written in python that uses GStreamer as multimedia framework.
 PyQt 4 is used to develop the GUI as of today but ideally other GUIs will be supported.
 
-For futher information about the functionalities see the wiki page.
+For further information about the functionalities see the Wiki page.
 
 ## Dependencies
 - PyQt 4 `sudo apt-get install python-qt4 python-qt4-dbus python-qt4-dev python-qt4-doc`
