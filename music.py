@@ -8,9 +8,8 @@ from os.path import isfile, join, expanduser
 
 # to play songs
 from backend import MusicPlayer
-
-# to manage playlist
 from playlist_creator import PlaylistManager
+from radio_streamer import RadioPlayer
 
 # custom Qt Objects
 from custom_qt_objects import CustomQWidget, CustomQListWidgetItem, \
@@ -49,6 +48,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
          #instantiate the PlaylistManager object
          self.playlist_manager = PlaylistManager()
+         #instantiate the RadioPlayer object
+         self.radio_player = RadioPlayer()
 
          # setting the methods to be called
          self.playButton.clicked.connect(self.playPauseAudio)
@@ -96,6 +97,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # register a function that GLib will call every second
          #GLib.timeout_add_seconds(1, self.get_stream_duration)
          self.addPlaylistButton.clicked.connect(self.add_new_playlist)
+
+         # simple code to test the radio manager
+         self.radioButton.clicked.connect(self.play_radio_stream)
+
+     def play_radio_stream(self):
+         self.radio_player.play_station("Virgin Radio")
 
 
      # Dinamically creates context menu according to playlist
@@ -381,7 +388,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # Get the current index. It will be incremented later if needed
          self.currentSongIndex = self.songsListWidget.row(song)
          self.player.load_audio(song.get_media_path())
-         self.playButton.setText('Pause')
+         #self.playButton.setText('Pause')
          self.playButton.setIcon(QtGui.QIcon('./icons/pause.png'))
 
 
@@ -397,16 +404,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
      def playPauseAudio(self):
          self.player.play_pause_audio()
          if self.playButton.text() == 'Play':
-             self.playButton.setText('Pause')
+             #self.playButton.setText('Pause')
              self.playButton.setIcon(QtGui.QIcon('./icons/pause.png'))
          else:
-             self.playButton.setText('Play')
+             #self.playButton.setText('Play')
              self.playButton.setIcon(QtGui.QIcon('./icons/play.png'))
 
 
      def stopAudio(self):
          self.player.stop_audio()
-         self.playButton.setText('Play')
+         #self.playButton.setText('Play')
          self.playButton.setIcon(QtGui.QIcon('./icons/play.png'))
 
 

@@ -23,7 +23,11 @@
     </rect>
    </property>
    <property name="text">
-    <string>Play</string>
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../icons/play.png</normaloff>../icons/play.png</iconset>
    </property>
   </widget>
   <widget class="QPushButton" name="stopButton">
@@ -36,7 +40,11 @@
     </rect>
    </property>
    <property name="text">
-    <string>Stop</string>
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../icons/stop.png</normaloff>../icons/stop.png</iconset>
    </property>
   </widget>
   <widget class="QPushButton" name="browseButton">
@@ -109,6 +117,19 @@
    </property>
    <property name="text">
     <string>Add Playlist</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="radioButton">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>20</y>
+     <width>88</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Play Radio</string>
    </property>
   </widget>
  </widget>
