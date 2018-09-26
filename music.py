@@ -306,15 +306,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
              #TODO: add to the list of songs!
 
 
-     '''def build_file_system(self):
-         self.music_root = expanduser("~") + "/Music"
-         self.fs_model = QtGui.QFileSystemModel(self)
-         self.fs_model.setRootPath(self.music_root)
-         self.indexRoot = self.fs_model.index(self.fs_model.rootPath())
-
-         self.fileSystemView.setModel(self.fs_model)
-         self.fileSystemView.setRootIndex(self.indexRoot)'''
-
      def populate_playlist_list(self):
          # get all the playlists
          self.playlists = self.playlist_manager.get_playlists()
