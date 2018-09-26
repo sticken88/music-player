@@ -74,7 +74,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          #self.build_file_system()
 
          # create music list from file system
-         self.populate_song_list_from_fs()
+         #self.populate_song_list_from_fs()
 
          # create fs
          self.create_fs_tree()
@@ -304,6 +304,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          if os.path.isfile(path):
              self.play_song_from_path(path)
              #TODO: add to the list of songs!
+             self.add_song_to_list(path)
+
 
 
      def populate_playlist_list(self):
@@ -374,6 +376,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
              # Add QListWidgetItem into QListWidget
              self.songsListWidget.addItem(customQListWidgetItem)
              self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
+
+
+     def add_song_to_list(self, path):
+         file_song = os.path.basename(path)
+         # Create a CustomQWidget for each item that must be added to the list
+         songCustomWidget = CustomQWidget()
+         # TODO: properly extract artist name
+         songCustomWidget.set_artist_name("Unknown")
+         songCustomWidget.set_song_title(file_song)
+         songCustomWidget.set_media_path(path)
+
+         customQListWidgetItem = CustomQListWidgetItem(songCustomWidget.get_media_path()) #QtGui.QListWidgetItem(self.songsListWidget)
+         # Set size hint and media path
+         customQListWidgetItem.setSizeHint(songCustomWidget.sizeHint())
+
+         # Add QListWidgetItem into QListWidget
+         self.songsListWidget.addItem(customQListWidgetItem)
+         self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
 
 
      def populate_song_list_from_fs(self):
