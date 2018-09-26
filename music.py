@@ -76,6 +76,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          # create music list from file system
          self.populate_song_list_from_fs()
 
+         # create fs
+         self.create_fs_tree()
+
          # create playlists list
          self.populate_playlist_list()
 
@@ -277,6 +280,31 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
          print "New value {0}".format(self.elapsedTimeSlider.value())
          self.player.seek_song_position(self.elapsedTimeSlider.value())
 
+     def create_fs_tree(self):
+         model = QtGui.QFileSystemModel()
+         music_root = expanduser("~") + "/Music"
+         model.setRootPath(music_root)
+
+         self.indexRoot = model.index(model.rootPath())
+
+         self.fs_tree.setModel(model)
+         self.fs_tree.setRootIndex(self.indexRoot)
+         self.fs_tree.hideColumn(1)
+         self.fs_tree.hideColumn(2)
+         self.fs_tree.hideColumn(3)
+
+         self.fs_tree.doubleClicked.connect(self.onTreeDoubleClicked)
+         self.fs_tree.show()
+
+
+     def onTreeDoubleClicked(self, index):
+         #TODO: check for non ascii chars
+         path = str(self.fs_tree.model().filePath(index))
+
+         if os.path.isfile(path):
+             self.play_song_from_path(path)
+             #TODO: add to the list of songs!
+
 
      '''def build_file_system(self):
          self.music_root = expanduser("~") + "/Music"
@@ -381,6 +409,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                    self.songsListWidget.addItem(customQListWidgetItem)
                    self.songsListWidget.setItemWidget(customQListWidgetItem, songCustomWidget)
 
+
+     def play_song_from_path(self, path):
+         print "Selected {}".format(path)
+         self.player.load_audio(path)
+         #self.playButton.setText('Pause')
+         self.playButton.setIcon(QtGui.QIcon('./icons/pause.png'))
 
 
      def play_song(self, song):
