@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>856</width>
-    <height>422</height>
+    <width>1087</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QPushButton" name="playButton">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>380</y>
+     <x>300</x>
+     <y>390</y>
      <width>88</width>
      <height>29</height>
     </rect>
@@ -33,8 +33,8 @@
   <widget class="QPushButton" name="stopButton">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>380</y>
+     <x>410</x>
+     <y>390</y>
      <width>88</width>
      <height>29</height>
     </rect>
@@ -63,8 +63,8 @@
   <widget class="QListWidget" name="songsListWidget">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>70</y>
+     <x>280</x>
+     <y>80</y>
      <width>501</width>
      <height>281</height>
     </rect>
@@ -73,8 +73,8 @@
   <widget class="QSlider" name="elapsedTimeSlider">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>380</y>
+     <x>530</x>
+     <y>390</y>
      <width>251</width>
      <height>20</height>
     </rect>
@@ -86,8 +86,8 @@
   <widget class="QSlider" name="volumeSlider">
    <property name="geometry">
     <rect>
-     <x>570</x>
-     <y>80</y>
+     <x>810</x>
+     <y>90</y>
      <width>20</width>
      <height>271</height>
     </rect>
@@ -99,8 +99,8 @@
   <widget class="QListWidget" name="playlistListWidget">
    <property name="geometry">
     <rect>
-     <x>610</x>
-     <y>70</y>
+     <x>850</x>
+     <y>80</y>
      <width>221</width>
      <height>281</height>
     </rect>
@@ -109,8 +109,8 @@
   <widget class="QPushButton" name="addPlaylistButton">
    <property name="geometry">
     <rect>
-     <x>740</x>
-     <y>360</y>
+     <x>980</x>
+     <y>370</y>
      <width>88</width>
      <height>29</height>
     </rect>
@@ -130,6 +130,16 @@
    </property>
    <property name="text">
     <string>Play Radio</string>
+   </property>
+  </widget>
+  <widget class="QTreeView" name="fs_tree">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>80</y>
+     <width>256</width>
+     <height>281</height>
+    </rect>
    </property>
   </widget>
  </widget>
